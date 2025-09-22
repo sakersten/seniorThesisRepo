@@ -214,7 +214,7 @@ The following sections detail the specific use cases that the system will suppor
   1. Display error.
   2. Go back to step 3. 
 
-  ### Use Case 1.9: Delete Trip
+### Use Case 1.9: Delete Trip
 - **Actors**: User
 - **Overview**: User deletes a trip. 
 
