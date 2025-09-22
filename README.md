@@ -75,7 +75,12 @@ The scope of the system also includes administrative tools for the Registrar’s
 The Mahoney University Registration System is a web-based platform designed to automate the course registration process for students and faculty. It serves as the primary interface for students to manage their academic schedules and for university staff to oversee the course offerings and registration workflows.
 
 ### System Features:
-1. **Secure Login**: Ensures that only authorized users (students, faculty, and staff) have access to the system, with user authentication based on university credentials.
+1. **Secure Login**: Ensures that only authorized users have access to the system, with user authentication based on a username and password.
+2. **Closet Items**: Allows users to input items that they have in their closet, enabling them to provide items for a packing list. 
+3. **Trip Items**: Allows users to add and edit trips, enabling them to input details about their trip to better generate packing lists. 
+4. 
+
+
 2. **Course Search**: Allows students to browse available courses by department, term, and subject, with filtering options based on course availability, schedule, and prerequisites.
 3. **Course Registration**: Students can add or drop courses, view class schedules, and receive notifications of any conflicts or unmet prerequisites.
 4. **Grades and Transcripts**: Provides students with access to their grades from current and past semesters, as well as the ability to request official transcripts.
@@ -88,8 +93,8 @@ The following sections detail the specific use cases that the system will suppor
 ## Use Cases
 
 ### Use Case 1.1: Secure Login
-- **Actors**: Student or registrar
-- **Overview**: Actor uses password to verify their identity.
+- **Actors**: User
+- **Overview**: User uses password to verify their identity.
 
 **Typical Course of Events**:
 1. Page prompts for username and password.
@@ -101,80 +106,127 @@ The following sections detail the specific use cases that the system will suppor
   1. Displays error.
   2. Go back to step 1.
 
-### Use Case 1.2: Find a Course
-- **Actors**: Student
-- **Overview**: Student finds a desired class.
+### Use Case 1.2: Input New Closet Item
+- **Actors**: User
+- **Overview**: User inputs information about their clothes to store in the application. 
 
 **Typical Course of Events**:
 1. Run Use Case 1.1, *Secure Login*.
-2. Displays list of current and upcoming semesters.
-3. Student selects a semester.
-4. Displays departments actively offering courses in that semester.
-5. Student selects a department.
-6. Displays courses of that department from that semester that are currently offered.
-7. Student selects a course.
-8. Displays course details.
+2. Displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
+3. User clicks *Input New Closet Item*. 
+4. Display New Closet Item Form. 
+5. User is prompted to input the closet item with the following required inputs: item type (top, bottom, outerwear, shoes, etc.), style (short-sleeve, long-sleeve, etc.), color (blue, green, etc.), use (casual, fancy, athletic), and season (winter, spring, summer, fall). 
+6. System verifies valid entry (all fields are filled out). 
+7. Displays item details and successfully added. 
 
 **Alternative Courses**:
-- Any step: Student can start a new search at any time
-  1. Student clicks "start new search."
-  2. Go back to step 2.
+- **Step 6**: Entry invalid (User clicks submit but a required field is left blank). 
+  1. Display error. 
+  2. Go back to step 5. 
 
-### Use Case 1.3: Register for a Course
-- **Actors**: Student
-- **Overview**: Student registers for a course.
+### Use Case 1.3: Input New Trip
+- **Actors**: User
+- **Overview**: User creates a new trip event. 
 
 **Typical Course of Events**:
-1. Run Use Case 1.2, *Find a Course*.
-2. Student clicks on "register for course" button.
-3. Verify that student can take the course.
-4. Display "You have successfully registered for 'insert course name here'."
+1. Run Use Case 1.1, *Secure Login*.
+2. Displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
+3. User clicks on *Create New Trip*.
+4. Display New Trip Event Form. 
+5. User is prompted to input details about their trip with the following required inputs: destination(s) (at least one location is required, but can have multiple), duration (in days), bag details (backpack only, carry-on, checked bag), trip activities (sightseeing, hiking, etc.), and if laundry is available (clothes can then be reused). 
+6. System verifies valid entry (all fields are filled out). 
+7. Display item details and successfully added. 
 
 **Alternative Courses**:
-- **Step 4**: Student can't take course
-  1. Displays "You cannot take this course, please contact the registrar for further information."
+- **Step 6**: Entry invalid (User clicks submit but a required field is left blank). 
+  1. Display error. 
+  2. Go back to step 5. 
 
-### Use Case 1.4: Check Grades
-- **Actors**: Student
-- **Overview**: Student checks grades.
-
-**Typical Course of Events**:
-1. Run Use Case 1.1, *Secure Login*.
-2. Display previous semesters in which the student took course(s).
-3. Student selects semester.
-4. Displays courses and grades.
-
-### Use Case 1.5: Registrar Creates Sections
-- **Actors**: Registrar
-- **Overview**: Registrar creates section.
+### Use Case 1.4: Open Closet 
+- **Actors**: User
+- **Overview**: User views details about closet items. 
 
 **Typical Course of Events**:
 1. Run Use Case 1.1, *Secure Login*.
-2. Registrar selects "Create Section."
-3. Display "Create Section" form.
-4. Registrar submits form.
-5. System verifies valid entry (no overlapping schedules/times).
-6. Displays section details and successfully added.
+2. Displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
+3. User selects *Details* on *Closet Items*.
+4. Displays details about closet items. 
+
+### Use Case 1.5: Open Trip
+- **Actors**: User
+- **Overview**: User views all details for one of their trips. 
+
+**Typical Course of Events**:
+1. Run Use Case 1.1, *Secure Login*.
+2. Displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
+3. User selects *Details* on *Trips*.
+4. Displays details about trip (destination(s), duration, bag details, and if laundry is available).
+
+### Use Case 1.6: Edit Closet Item
+- **Actors**: User
+- **Overview**: User edits an existing closet item. 
+
+**Typical Course of Events**:
+1. Run Use Case 1.1, *Secure Login*.
+2. Displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
+3. User selects *Details* on *Closet Items*.
+4. User selects *Edit Item*. 
+5. Displays *Edit Item* Form. 
+6. System verifies valid entry (all fields are filled out). 
+7. Display item details and successfully updated. 
 
 **Alternative Courses**:
 - **Step 6**: Entry invalid
   1. Display error.
-  2. Go back to step 3.
+  2. Go back to step 5.
 
-### Use Case 1.6: Registrar Modifies Section
-- **Actors**: Registrar
-- **Overview**: Registrar modifies existing sections.
+### Use Case 1.7: Edit Trip
+- **Actors**: User
+- **Overview**: User edits an existing trip. 
 
 **Typical Course of Events**:
 1. Run Use Case 1.1, *Secure Login*.
-2. Registrar selects "Modify section."
-3. Displays all sections (with order options).
-4. Choose section.
-5. Display "Edit Form" with filled-in data.
-6. Submit/verify data.
-7. Display "Section successfully edited."
+2. Displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
+3. User selects *Details* on *Trips*.
+4. User selects *Edit Trip*. 
+5. Displays *Edit Trip* Form. 
+6. System verifies valid entry (all fields are filled out). 
+7. Display item details and successfully updated. 
 
 **Alternative Courses**:
-- **Step 7**: Invalid Data
-  1. Display Error.
+- **Step 6**: Entry invalid
+  1. Display error.
   2. Go back to step 5.
+
+### Use Case 1.8: Delete Item
+- **Actors**: User
+- **Overview**: User deletes a closet item. 
+
+**Typical Course of Events**:
+1. Run Use Case 1.1, *Secure Login*.
+2. Displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
+3. User selects *Details* on *Closet Items*.
+4. User selects *Delete Item*.
+5. Displays that the item was successfully deleted. 
+
+**Alternative Courses**:
+- **Step 4**: Delete invalid
+  1. Display error.
+  2. Go back to step 3. 
+
+  ### Use Case 1.9: Delete Trip
+- **Actors**: User
+- **Overview**: User deletes a trip. 
+
+**Typical Course of Events**:
+1. Run Use Case 1.1, *Secure Login*.
+2. Displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
+3. User selects *Details* on *Trips*.
+4. User selects *Delete Item*.
+5. Displays that the item was successfully deleted. 
+
+**Alternative Courses**:
+- **Step 4**: Delete invalid
+  1. Display error.
+  2. Go back to step 3. 
+
