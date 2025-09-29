@@ -98,8 +98,9 @@ The following sections detail the specific use cases that the system will suppor
 
 **Typical Course of Events**:
 1. Page prompts for username and password.
-2. User enters their username and password and hits enter/login.
+2. User enters credentials and clicks Login.
 3. System verifies that the username and password are correct.
+4. User is granted access to the application.
 
 **Alternative Courses**:
 - **Step 3**: User and/or password are not correct.
@@ -108,16 +109,17 @@ The following sections detail the specific use cases that the system will suppor
 
 ### Use Case 1.2: Input New Closet Item
 - **Actors**: User
-- **Overview**: User inputs information about their clothes to store in the application. 
+- **Overview**: User adds a new clothing item to store in the application. 
 
 **Typical Course of Events**:
 1. Run Use Case 1.1, *Secure Login*.
-2. Displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
+2. Dashboard displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
 3. User clicks *Input New Closet Item*. 
 4. Display New Closet Item Form. 
 5. User is prompted to input the closet item with the following required inputs: item type (top, bottom, outerwear, shoes, etc.), style (short-sleeve, long-sleeve, etc.), color (blue, green, etc.), use (casual, fancy, athletic), and season (winter, spring, summer, fall). 
-6. System verifies valid entry (all fields are filled out). 
-7. Displays item details and successfully added. 
+6. User submits the form. 
+7. System verifies valid entry (required fields are not left blank).
+8. Closet item is saved and success confirmation with details is displayed.
 
 **Alternative Courses**:
 - **Step 6**: Entry invalid (User clicks submit but a required field is left blank). 
@@ -130,12 +132,13 @@ The following sections detail the specific use cases that the system will suppor
 
 **Typical Course of Events**:
 1. Run Use Case 1.1, *Secure Login*.
-2. Displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
+2. Dashboard displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
 3. User clicks on *Create New Trip*.
 4. Display New Trip Event Form. 
 5. User is prompted to input details about their trip with the following required inputs: destination(s) (at least one location is required, but can have multiple), duration (in days), bag details (backpack only, carry-on, checked bag), trip activities (sightseeing, hiking, etc.), and if laundry is available (clothes can then be reused). 
-6. System verifies valid entry (all fields are filled out). 
-7. Display item details and successfully added. 
+6. User submits the form. 
+7. System verifies valid entry (required fields are not left blank). 
+8. Display item details and successfully added. 
 
 **Alternative Courses**:
 - **Step 6**: Entry invalid (User clicks submit but a required field is left blank). 
@@ -144,36 +147,37 @@ The following sections detail the specific use cases that the system will suppor
 
 ### Use Case 1.4: Open Closet 
 - **Actors**: User
-- **Overview**: User views details about closet items. 
+- **Overview**: User views closet item details.
 
 **Typical Course of Events**:
 1. Run Use Case 1.1, *Secure Login*.
-2. Displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
+2. Dashboard displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
 3. User selects *Details* on *Closet Items*.
-4. Displays details about closet items. 
+4. System displays full details of the selected closet item.
 
 ### Use Case 1.5: Open Trip
 - **Actors**: User
-- **Overview**: User views all details for one of their trips. 
+- **Overview**: User views trip details.
 
 **Typical Course of Events**:
 1. Run Use Case 1.1, *Secure Login*.
-2. Displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
+2. Dashboard displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
 3. User selects *Details* on *Trips*.
-4. Displays details about trip (destination(s), duration, bag details, and if laundry is available).
+4. System displays full trip details: destinations, duration, bag details, activities, laundry availability.
 
 ### Use Case 1.6: Edit Closet Item
 - **Actors**: User
-- **Overview**: User edits an existing closet item. 
+- **Overview**: User updates details of an existing closet item.
 
 **Typical Course of Events**:
 1. Run Use Case 1.1, *Secure Login*.
-2. Displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
+2. Dashboard displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
 3. User selects *Details* on *Closet Items*.
-4. User selects *Edit Item*. 
-5. Displays *Edit Item* Form. 
-6. System verifies valid entry (all fields are filled out). 
-7. Display item details and successfully updated. 
+4. User clicks *Edit Item*. 
+5. System displays *Edit Item* Form, pre-filled with the current item details.
+6. User modifies one or more fields and submits.
+7. System verifies valid entry (required fields are not left blank). 
+8. Display updated item details and confirmation of successful update.
 
 **Alternative Courses**:
 - **Step 6**: Entry invalid
@@ -182,37 +186,43 @@ The following sections detail the specific use cases that the system will suppor
 
 ### Use Case 1.7: Edit Trip
 - **Actors**: User
-- **Overview**: User edits an existing trip. 
+- **Overview**: User updates details of an existing trip.
 
 **Typical Course of Events**:
 1. Run Use Case 1.1, *Secure Login*.
-2. Displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
+2. Dashboard displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
 3. User selects *Details* on *Trips*.
 4. User selects *Edit Trip*. 
-5. Displays *Edit Trip* Form. 
-6. System verifies valid entry (all fields are filled out). 
-7. Display item details and successfully updated. 
+5. Displays *Edit Trip* Form, pre-filled with the current trip details.
+6. User modifies one or more fields and submits.
+7. System verifies valid entry (required fields are not left blank). 
+8. Display updated trip details and confirmation of successful update.
 
 **Alternative Courses**:
 - **Step 6**: Entry invalid
   1. Display error.
   2. Go back to step 5.
 
-### Use Case 1.8: Delete Item
+### Use Case 1.8: Delete Closet Item
 - **Actors**: User
 - **Overview**: User deletes a closet item. 
 
 **Typical Course of Events**:
 1. Run Use Case 1.1, *Secure Login*.
-2. Displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
+2. Dashboard displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
 3. User selects *Details* on *Closet Items*.
 4. User selects *Delete Item*.
-5. Displays that the item was successfully deleted. 
+5. System prompts for confirmation ("Are you sure you want to delete this item?"). 
+6. User confirms deletion. 
+7. Displays that the item was successfully deleted. 
 
 **Alternative Courses**:
 - **Step 4**: Delete invalid
   1. Display error.
   2. Go back to step 3. 
+
+- **Step 5**: User cancels deletion
+  1. Return to *Closet Item Details*. 
 
 ### Use Case 1.9: Delete Trip
 - **Actors**: User
@@ -220,13 +230,18 @@ The following sections detail the specific use cases that the system will suppor
 
 **Typical Course of Events**:
 1. Run Use Case 1.1, *Secure Login*.
-2. Displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
+2. Dashboard displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
 3. User selects *Details* on *Trips*.
-4. User selects *Delete Item*.
-5. Displays that the item was successfully deleted. 
+4. User selects *Delete Trip*.
+5. System prompts for confirmation ("Are you sure you want to delete this item?"). 
+6. User confirms deletion. 
+7. Displays that the trip was successfully deleted. 
 
 **Alternative Courses**:
 - **Step 4**: Delete invalid
   1. Display error.
   2. Go back to step 3. 
+
+- **Step 5**: User cancels deletion
+  1. Return to *Trip Details*. 
 
