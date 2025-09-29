@@ -18,7 +18,26 @@
 
 ---
 
-## Week 2 Summary (MM/DD/YYYY)
+## Week 2 Summary (10/6/2025)
+### This week I worked on:
+
+- [Your answer here]
+
+### This week I learned:
+
+- [Your answer here]
+
+### My successes this week were:
+
+- [Your answer here]
+
+### The challenges I faced this week were:
+
+- [Your answer here]
+
+---
+
+## Week 3 Summary (10/13/2025)
 ### This week I worked on:
 
 [Your answer here]
@@ -37,26 +56,7 @@
 
 ---
 
-## Week 3 Summary (MM/DD/YYYY)
-### This week I worked on:
-
-[Your answer here]
-
-### This week I learned:
-
-[Your answer here]
-
-### My successes this week were:
-
-[Your answer here]
-
-### The challenges I faced this week were:
-
-[Your answer here]
-
----
-
-## Week 4 Summary (MM/DD/YYYY)
+## Week 4 Summary (10/20/2025)
 ### This week I worked on:
 
 [Your answer here]
