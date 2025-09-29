@@ -1,20 +1,20 @@
-## Week 1 Summary (MM/DD/YYYY)
+## Week 1 Summary (9/29/2025)
 
 ### This week I worked on:
 
-[Your answer here]
+- I worked on refining my Introduction and Use Cases. 
 
 ### This week I learned:
 
-[Your answer here]
+- I started to research ReactNative. 
 
 ### My successes this week were:
 
-[Your answer here]
+- I finished my Introduction and Use Cases!
 
 ### The challenges I faced this week were:
 
-[Your answer here]
+- No challenges... yet. 
 
 ---
 
