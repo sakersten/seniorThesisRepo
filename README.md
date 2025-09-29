@@ -31,11 +31,7 @@ I have added a ```main.cpp``` file to get you started. Feel free to remove it.
 
 If you have any questions feel free to ask me! I'll answer professor questions, customer questions, and give advice if asked.
 
-# Sample Spec
-
-Below is an example of a project specification.  
-
-## Software Requirements Specification for PackPal Mobile Application
+# Software Requirements Specification for PackPal Mobile Application
 
 ## Introduction
 
