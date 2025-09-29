@@ -1,4 +1,4 @@
-# Senior Thesis Repo: [PLACE YOUR PROJECT NAME HERE]
+# Senior Thesis Repo: PackPal Mobile Application
 This repository is provided to help you build your senior thesis project. You will edit it to store your specification documents, code, and weekly checkins.
 
 First, fork this repo (this makes a copy of it associated with your account) and then clone it to your machine (this makes a copy of your fork on your personal machine). You can then use an editor and a GitHub client to manage the repository.
