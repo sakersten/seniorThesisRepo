@@ -35,7 +35,7 @@ If you have any questions feel free to ask me! I'll answer professor questions, 
 
 Below is an example of a project specification.  
 
-## Software Requirements Specification for the Mahoney University Registration System
+## Software Requirements Specification for PackPal Mobile Application
 
 ## Introduction
 
