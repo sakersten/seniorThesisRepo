@@ -40,55 +40,49 @@ Below is an example of a project specification.
 ## Introduction
 
 ### Purpose
-The purpose of this document is to outline the functional and non-functional requirements of Mahoney University’s new online registration system. The system is designed to streamline the registration process for students and faculty, replacing the outdated manual system. This specification serves as a contract between the system stakeholders and the developers to ensure that the system meets the needs of its users while adhering to university policies and technical constraints.
+The purpose of this document is to outline the functional and non-functional requirements of PackPal, a mobile travel and packing assistant application. PackPal is designed to simplify trip preparation by helping users manage their closet inventory, plan trips, and generate customized packing lists. This specification serves as a shared agreement between stakeholders and developers, ensuring that the app meets user needs while maintaining usability, reliability, and technical consistency.
 
-The key goals of the new system are:
-- To improve the efficiency of the course registration process for students.
-- To provide staff in the Registrar’s Office with tools to manage course offerings, schedules, and student records.
-- To enhance the accuracy and accessibility of student academic information, such as grades and enrollment history.
-- To support the university’s transition to digital infrastructure while maintaining compatibility with legacy systems during a transitional period.
+The key goals of PackPal are:
+- To streamline the trip preparation process, reducing the time and effort spent planning and packing.
+- To provide users with tools to manage their closet inventory, making packing more accurate and less repetitive.
+- To automatically generate tailored packing lists based on trip details such as destination, activities, and duration.
+- To ensure secure access to user data through authenticated accounts.
 
 ### Scope
-This system is intended to support the registration process for all students at Mahoney University, including undergraduates, graduate students, and non-degree-seeking students. The system will handle:
-- Student authentication and secure access to personal records.
-- Course search and registration.
-- Enrollment validation, including prerequisite checks and course availability.
-- Management of student schedules, including the ability to add, drop, or modify course enrollments.
-- Grade viewing and transcript requests.
+PackPal is intended for individual travelers who want to simplify and organize their packing process. The app will support:
+- Secure user authentication and access to personal closet and trip data.
+- Management of closet items, including adding, editing, and deleting items.
+- Trip creation and modification, capturing details such as destinations, dates, activities, bag type, and laundry availability.
+- Automatic generation of packing lists based on the user’s closet inventory and trip details.
+- Viewing, updating, or deleting trips and closet items as needed.
 
-The scope of the system also includes administrative tools for the Registrar’s Office to:
-- Create and modify course offerings for each academic term.
-- Manage enrollment caps, waitlists, and course prerequisites.
-- Track student progress and generate reports for academic performance.
+Additional features include:
+- A personalized dashboard displaying upcoming trips and recent closet activity.
+- Editing trips or items through pre-filled forms to minimize duplicate entry.
+- Input validation to ensure accurate data (e.g., required trip details must be provided).
 
 ### Definitions, Acronyms, and Abbreviations
-- **Registrar**: The official responsible for maintaining student records, managing course schedules, and overseeing the registration process.
-- **Student Information System (SIS)**: A university-wide database that stores student records, course information, and academic data.
-- **GPA**: Grade Point Average, a numerical representation of a student's academic performance.
-- **Semester**: A division of the academic year, typically consisting of a Fall and Spring term, in which courses are offered and completed.
-- **Waitlist**: A system that allows students to reserve a spot in a full course, subject to availability if another student drops the course.
-- **Prerequisite**: A course or requirement that must be completed before a student can enroll in a more advanced course.
-- **User Role**: A designation for system access levels, such as student, registrar, or faculty member, each with different permissions within the system.
-- **Concurrent Enrollment**: The ability for students to be enrolled in multiple courses during the same academic term.
+- **Closet Item**: An individual piece of clothing, accessory, or other item that a user owns and may pack for a trip.
+- **Trip**: A planned travel event with destinations, duration, and activities, used to generate a packing list.
+- **Packing List**: A system-generated list of closet items tailored to a specific trip.
+- **User Role**: The traveler who creates, edits, and manages closet items and trips within the system.
+- **Authentication**: The process of securely logging in with a username and password to access system features.
 
 ## Overview
-The Mahoney University Registration System is a web-based platform designed to automate the course registration process for students and faculty. It serves as the primary interface for students to manage their academic schedules and for university staff to oversee the course offerings and registration workflows.
+PackPal is a mobile application designed to help users plan trips and organize their packing efficiently. It combines a virtual closet with a trip planner, giving users an integrated way to manage clothing items and prepare for travel.
 
 ### System Features:
-1. **Secure Login**: Ensures that only authorized users have access to the system, with user authentication based on a username and password.
-2. **Closet Items**: Allows users to input items that they have in their closet, enabling them to provide items for a packing list. 
-3. **Trip Items**: Allows users to add and edit trips, enabling them to input details about their trip to better generate packing lists. 
-4. 
+The travel and packing assistant system is a web-based platform designed to help users organize trips and generate personalized packing lists. It functions as both a virtual closet and a trip planner, combining inventory management with travel preparation.
 
+1. **Secure Login**: Ensures only authorized users can access the system through authentication with a username and password.
+2. **Closet Management**: Users can add, edit, and delete items from their virtual closet to build a comprehensive inventory.
+3. **Trip Management**: Users can create, view, edit, and delete trips to specify destinations, duration, activities, bag type, and laundry options.
+4. **Packing List Generation**: PackPal generates personalized packing lists automatically from the user’s closet inventory and trip details, with the option to regenerate lists after updates.
+5. **Dashboard Overview**: Displays a snapshot of recent closet activity and upcoming trips for quick access.
 
-2. **Course Search**: Allows students to browse available courses by department, term, and subject, with filtering options based on course availability, schedule, and prerequisites.
-3. **Course Registration**: Students can add or drop courses, view class schedules, and receive notifications of any conflicts or unmet prerequisites.
-4. **Grades and Transcripts**: Provides students with access to their grades from current and past semesters, as well as the ability to request official transcripts.
-5. **Registrar Management Tools**: The Registrar’s Office can create, modify, and delete course sections, set enrollment limits, and manage waitlists.
+PackPal is designed to be fast, intuitive, and scalable so that users can manage multiple trips and large closet inventories without performance issues. Utilizing ReactNative, it emphasizes ease of use, security, and personalized travel preparation.
 
-The system is designed with scalability in mind, allowing it to handle thousands of students registering simultaneously during peak periods. It will integrate with the university’s existing Student Information System (SIS) and is built using modern web technologies to ensure ease of use, reliability, and performance.
-
-The following sections detail the specific use cases that the system will support, describing how students and staff will interact with the system during typical operations.
+The following sections detail the specific use cases that the system will support, describing how users will interact with the system during typical operations.
 
 ## Use Cases
 
@@ -113,135 +107,149 @@ The following sections detail the specific use cases that the system will suppor
 
 **Typical Course of Events**:
 1. Run Use Case 1.1, *Secure Login*.
-2. Dashboard displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
-3. User clicks *Input New Closet Item*. 
-4. Display New Closet Item Form. 
-5. User is prompted to input the closet item with the following required inputs: item type (top, bottom, outerwear, shoes, etc.), style (short-sleeve, long-sleeve, etc.), color (blue, green, etc.), use (casual, fancy, athletic), and season (winter, spring, summer, fall). 
-6. User submits the form. 
-7. System verifies valid entry (required fields are not left blank).
-8. Closet item is saved and success confirmation with details is displayed.
+2. Dashboard displays a small selection of closet items (blank if none) and a blurb about the newest upcoming trip (blank if none).
+3. User selects *Closet*. 
+4. User clicks *Input New Closet Item*. 
+5. Display *New Closet Item* Form. 
+6. User is prompted to input the closet item with the following required inputs: item type (top, bottom, outerwear, shoes, etc.), style (short-sleeve, long-sleeve, etc.), color (blue, green, etc.), use (casual, fancy, athletic), and season (winter, spring, summer, fall). 
+7. User submits the form. 
+8. System verifies valid entry (required fields are not left blank).
+9. Closet item is saved and displayed in closet inventory. 
 
 **Alternative Courses**:
-- **Step 6**: Entry invalid (User clicks submit but a required field is left blank). 
+- **Step 8**: Entry invalid (User clicks submit but a required field is left blank) 
   1. Display error. 
-  2. Go back to step 5. 
+  2. Go back to step 6. 
 
-### Use Case 1.3: Input New Trip
-- **Actors**: User
-- **Overview**: User creates a new trip event. 
-
-**Typical Course of Events**:
-1. Run Use Case 1.1, *Secure Login*.
-2. Dashboard displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
-3. User clicks on *Create New Trip*.
-4. Display New Trip Event Form. 
-5. User is prompted to input details about their trip with the following required inputs: destination(s) (at least one location is required, but can have multiple), duration (in days), bag details (backpack only, carry-on, checked bag), trip activities (sightseeing, hiking, etc.), and if laundry is available (clothes can then be reused). 
-6. User submits the form. 
-7. System verifies valid entry (required fields are not left blank). 
-8. Display item details and successfully added. 
-
-**Alternative Courses**:
-- **Step 6**: Entry invalid (User clicks submit but a required field is left blank). 
-  1. Display error. 
-  2. Go back to step 5. 
-
-### Use Case 1.4: Open Closet 
-- **Actors**: User
-- **Overview**: User views closet item details.
-
-**Typical Course of Events**:
-1. Run Use Case 1.1, *Secure Login*.
-2. Dashboard displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
-3. User selects *Details* on *Closet Items*.
-4. System displays full details of the selected closet item.
-
-### Use Case 1.5: Open Trip
-- **Actors**: User
-- **Overview**: User views trip details.
-
-**Typical Course of Events**:
-1. Run Use Case 1.1, *Secure Login*.
-2. Dashboard displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
-3. User selects *Details* on *Trips*.
-4. System displays full trip details: destinations, duration, bag details, activities, laundry availability.
-
-### Use Case 1.6: Edit Closet Item
+### Use Case 1.3: Edit Closet Item
 - **Actors**: User
 - **Overview**: User updates details of an existing closet item.
 
 **Typical Course of Events**:
 1. Run Use Case 1.1, *Secure Login*.
-2. Dashboard displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
-3. User selects *Details* on *Closet Items*.
-4. User clicks *Edit Item*. 
-5. System displays *Edit Item* Form, pre-filled with the current item details.
-6. User modifies one or more fields and submits.
-7. System verifies valid entry (required fields are not left blank). 
-8. Display updated item details and confirmation of successful update.
+2. Dashboard displays closet items and trip blurb.
+3. User selects *Closet*. 
+4. User selects *Details* for a specific item in *Closet*. 
+5. User selects *Edit Item*.
+6. System displays *Edit Item* Form, pre-filled with the current item details.
+7. User modifies one or more fields and submits.
+8. System verifies valid entry (required fields are not left blank). 
+9. Display updated item details and confirmation of successful update.
 
 **Alternative Courses**:
-- **Step 6**: Entry invalid
+- **Step 7**: User cancels edit
+  1. Discard changes. 
+  2. Return to *Closet Item Details* without updating the item.
+
+- **Step 8**: Entry invalid (User clicks submit but a required field is left blank)
   1. Display error.
-  2. Go back to step 5.
+  2. Go back to step 6. 
 
-### Use Case 1.7: Edit Trip
-- **Actors**: User
-- **Overview**: User updates details of an existing trip.
-
-**Typical Course of Events**:
-1. Run Use Case 1.1, *Secure Login*.
-2. Dashboard displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
-3. User selects *Details* on *Trips*.
-4. User selects *Edit Trip*. 
-5. Displays *Edit Trip* Form, pre-filled with the current trip details.
-6. User modifies one or more fields and submits.
-7. System verifies valid entry (required fields are not left blank). 
-8. Display updated trip details and confirmation of successful update.
-
-**Alternative Courses**:
-- **Step 6**: Entry invalid
-  1. Display error.
-  2. Go back to step 5.
-
-### Use Case 1.8: Delete Closet Item
+### Use Case 1.4: Delete Closet Item
 - **Actors**: User
 - **Overview**: User deletes a closet item. 
 
 **Typical Course of Events**:
 1. Run Use Case 1.1, *Secure Login*.
-2. Dashboard displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
-3. User selects *Details* on *Closet Items*.
-4. User selects *Delete Item*.
-5. System prompts for confirmation ("Are you sure you want to delete this item?"). 
-6. User confirms deletion. 
-7. Displays that the item was successfully deleted. 
+2. Dashboard displays closet items and trip blurb.
+3. User selects *Closet*. 
+4. User selects *Details* for a specific item in *Closet*. 
+5. User selects *Delete Item*.
+6. System prompts for confirmation ("Are you sure you want to delete this item?"). 
+7. User confirms deletion. 
+8. Displays that the item was successfully deleted. 
 
 **Alternative Courses**:
-- **Step 4**: Delete invalid
+- **Step 5**: Delete invalid
   1. Display error.
-  2. Go back to step 3. 
+  2. Go back to step 4. 
 
-- **Step 5**: User cancels deletion
-  1. Return to *Closet Item Details*. 
+- **Step 6**: User cancels deletion
+  1. Return to **Closet Item Details*. 
 
-### Use Case 1.9: Delete Trip
+### Use Case 1.5: Input New Trip
 - **Actors**: User
-- **Overview**: User deletes a trip. 
+- **Overview**: User creates a new trip event. 
 
 **Typical Course of Events**:
 1. Run Use Case 1.1, *Secure Login*.
-2. Dashboard displays small selection of closet items (blank if no items) and a blurb about newest upcoming trip (blank if no items). 
-3. User selects *Details* on *Trips*.
-4. User selects *Delete Trip*.
-5. System prompts for confirmation ("Are you sure you want to delete this item?"). 
-6. User confirms deletion. 
-7. Displays that the trip was successfully deleted. 
+2. Dashboard displays closet items and trip blurb. 
+3. User selects *Trips*.
+4. User selects *Create New Trip*.
+5. Display *New Trip* Form. 
+6. User is prompted to input details about their trip with the following required inputs: destination(s) (at least one location is required, but can have multiple), duration (in days), bag details (backpack only, carry-on, checked bag), trip activities (sightseeing, hiking, etc.), and if laundry is available (clothes can then be reused). 
+7. User submits the form. 
+8. System verifies valid entry (required fields are not left blank). 
+9. Trip is saved and displayed in *Trips*. 
+10. System automatically generates a packing list based on closet items and trip details. 
+11. Packing list is displayed alongside trip information. 
 
 **Alternative Courses**:
-- **Step 4**: Delete invalid
-  1. Display error.
-  2. Go back to step 3. 
+- **Step 8**: Entry invalid (User clicks submit but a required field is left blank)
+  1. Display error. 
+  2. Go back to step 5. 
 
-- **Step 5**: User cancels deletion
+### Use Case 1.6: Edit Trip
+- **Actors**: User
+- **Overview**: User updates details of an existing trip.
+
+**Typical Course of Events**:
+1. Run Use Case 1.1, *Secure Login*.
+2. Dashboard displays closet items and trip blurb.
+3. User selects *Trips*. 
+4. User selects *Details* for a specific trip.
+5. User selects *Edit Trip*. 
+6. Displays *Edit Trip* Form, pre-filled with the current trip details.
+7. User modifies one or more fields and submits.
+8. System verifies valid entry (required fields are not left blank). 
+9. Display updated trip details and confirmation of successful update.
+
+**Alternative Courses**:
+- **Step 7**: User cancels edit
+  1. Discard changes. 
+  2. Return to *Trip Details* without updating the trip. 
+
+- **Step 8**: Entry invalid (User clicks submit but a required field is left blank)
+  1. Display error.
+  2. Go back to step 6.
+
+### Use Case 1.7: Delete Trip
+- **Actors**: User
+- **Overview**: User deletes a trip and its associated packing list.
+
+**Typical Course of Events**:
+1. Run Use Case 1.1, *Secure Login*.
+2. Dashboard displays closet items and trip blurb.
+3. User selects *Trips*. 
+4. User selects *Details* for a specific trip.
+5. User selects *Delete Trip*.
+6. System prompts for confirmation ("Are you sure you want to delete this trip?"). 
+7. User confirms deletion. 
+8. Trip and its associated packing list are deleted.
+
+**Alternative Courses**:
+- **Step 5**: Delete invalid
+  1. Display error.
+  2. Go back to step 4. 
+
+- **Step 6**: User cancels deletion
   1. Return to *Trip Details*. 
 
+### Use Case 1.8: Regenerate Packing List
+- **Actors**: User
+- **Overview**: User regenerates a packing list for an existing trip after editing closet items or trip details.
+
+**Typical Course of Events**:
+1. Run Use Case 1.1, *Secure Login*.
+2. Dashboard displays closet items and trip blurb.
+3. User selects *Trips*. 
+4. User selects *Details* for a specific trip.
+5. User selects *Regenerate Packing List*.
+6. System analyzes current closet inventory and trip details.
+7. System generates a new packing list, replacing the old list. 
+8. Display updated packing list with confirmation.
+
+**Alternative Courses**:
+- **Step 6**: Closet is empty or no valid matches
+  1. Display message: *No items available to generate a packing list. Please add closet items*. 
+  2. Return to *Trip Details*. 
