@@ -21,19 +21,20 @@
 ## Week 2 Summary (10/6/2025)
 ### This week I worked on:
 
-- [Your answer here]
+- I practiced my elevator pitch. 
+- I continued to research ReactNative. I have decided I am going to create an Android mobile app. 
 
 ### This week I learned:
 
-- [Your answer here]
+- I learned a bit more about ReactNative! I found that I could only develop an iOS mobile app if I am using macOS, which I am not. I am instead going to develop an Android mobile app. 
 
 ### My successes this week were:
 
-- [Your answer here]
+- I presented my elevator pitch in class today!
 
 ### The challenges I faced this week were:
 
-- [Your answer here]
+- No challenges... yet. 
 
 ---
 
