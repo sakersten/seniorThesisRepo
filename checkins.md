@@ -41,19 +41,19 @@
 ## Week 3 Summary (10/13/2025)
 ### This week I worked on:
 
-[Your answer here]
+- I began installing the Expo framework for ReactNative. 
 
 ### This week I learned:
 
-[Your answer here]
+- It is helpful to have a framework for developing an app in ReactNative. Without a Framework, you typically either have to write your own solutions to implement core features, or you’ll have to piece together a collection of pre-existing libraries to create a skeleton of a Framework. It takes a lot of real work to start an app with no Framework, as well as later on when you are maintaining your app. 
 
 ### My successes this week were:
 
-[Your answer here]
+- Began my first sprint!
 
 ### The challenges I faced this week were:
 
-[Your answer here]
+- No challenges... yet. 
 
 ---
 
