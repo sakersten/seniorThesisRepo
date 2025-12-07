@@ -57,22 +57,22 @@
 
 ---
 
-## Week 4 Summary (10/20/2025)
+## Week 4 Summary (11/24/2025)
 ### This week I worked on:
 
-[Your answer here]
+- I adjusted my project. I changed my project from a mobile application to a web application. I primarily made this change as I have a Windows laptop and an Apple phone, so testing for a mobile application would have been difficult. 
 
 ### This week I learned:
 
-[Your answer here]
+- I 
 
 ### My successes this week were:
 
-[Your answer here]
+- I 
 
 ### The challenges I faced this week were:
 
-[Your answer here]
+- I realized that it would be difficult to test my project, as I am creating a mobile application on a Windows machine and I have an Apple phone. I chose to change my project from a mobile application to a web application so that this challenge would be reduced.  
 
 ---
 

@@ -36,7 +36,7 @@ If you have any questions feel free to ask me! I'll answer professor questions, 
 ## Introduction
 
 ### Purpose
-The purpose of this document is to outline the functional and non-functional requirements of PackPal, a mobile travel and packing assistant application. PackPal is designed to simplify trip preparation by helping users manage their closet inventory, plan trips, and generate customized packing lists. This specification serves as a shared agreement between stakeholders and developers, ensuring that the app meets user needs while maintaining usability, reliability, and technical consistency.
+The purpose of this document is to outline the functional and non-functional requirements of PackPal, a travel and packing assistant web application. PackPal is designed to simplify trip preparation by helping users manage their closet inventory, plan trips, and generate customized packing lists. This specification serves as a shared agreement between stakeholders and developers, ensuring that the app meets user needs while maintaining usability, reliability, and technical consistency.
 
 The key goals of PackPal are:
 - To streamline the trip preparation process, reducing the time and effort spent planning and packing.
@@ -65,7 +65,7 @@ Additional features include:
 - **Authentication**: The process of securely logging in with a username and password to access system features.
 
 ## Overview
-PackPal is a mobile application designed to help users plan trips and organize their packing efficiently. It combines a virtual closet with a trip planner, giving users an integrated way to manage clothing items and prepare for travel.
+PackPal is a web application designed to help users plan trips and organize their packing efficiently. It combines a virtual closet with a trip planner, giving users an integrated way to manage clothing items and prepare for travel.
 
 ### System Features:
 The travel and packing assistant system is a web-based platform designed to help users organize trips and generate personalized packing lists. It functions as both a virtual closet and a trip planner, combining inventory management with travel preparation.
