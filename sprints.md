@@ -20,3 +20,18 @@
 ### My challenge this sprint were: 
 - I realized that it would be difficult to test my project, as I am creating a mobile application on a Windows machine and I have an Apple phone. I chose to change my project from a mobile application to a web application so that this challenge would be reduced. 
 - I am unfamiliar with PostgreSQL, so I plan to work more with inserting and pulling data from it in the next sprint. 
+
+--
+
+## Sprint #2
+### This sprint I worked on: 
+- TBD
+
+### This sprint I learned: 
+- TBD
+
+### My successes this sprint were: 
+- TBD
+
+### My challenge this sprint were: 
+- TBD
