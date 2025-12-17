@@ -51,7 +51,7 @@ app.use(express.static(path.join(__dirname, '../client/dist')));
 
 // mount routes
 app.use('/auth', authRoutes);                // login, logout, google oauth
-app.use('/weather', weatherRoutes);                 // weather API
+app.use('/weather', weatherRoutes);          // weather API
 // app.use('/activities', activityRoutes);      // user trip activities
 // app.use('/closet', closetRoutes);            // clothing items in user's closet
 // app.use('/destinations', destinationRoutes); // cities, coords, climate info

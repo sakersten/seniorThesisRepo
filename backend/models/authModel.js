@@ -1,1 +1,1 @@
-// SQL for authentication functionality
+// runs all database queries and handles data storage/retrieval

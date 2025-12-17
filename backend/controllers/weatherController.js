@@ -1,4 +1,4 @@
-// handles pulling the weather
+// handles the request logic -> reads inputs, calls model functions, and sends responses
 
 const dotenv = require('dotenv');
 dotenv.config(); // do NOT pass './.env', just call dotenv.config()

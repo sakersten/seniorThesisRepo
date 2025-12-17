@@ -5,7 +5,7 @@ import Weather from "../components/Weather";
 // create a nice wrapper at the top for each page... maybe?
 
 function Home({ user, onLogout }) {
-  // Example coordinates for testing (Paris)
+  // example coordinates for testing (Paris)
   const latitude = 48.8566;
   const longitude = 2.3522;
 
@@ -18,7 +18,6 @@ function Home({ user, onLogout }) {
 
       {/* Weather Section */}
       <div style={{ marginTop: "2rem" }}>
-        <h3>Current Weather at Your Destination</h3>
         <Weather latitude={latitude} longitude={longitude} />
       </div>
     </div>
