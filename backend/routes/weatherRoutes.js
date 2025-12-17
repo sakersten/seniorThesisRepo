@@ -5,6 +5,7 @@ const router = express.Router();
 
 const weatherController = require("../controllers/weatherController.js");
 
-router.get("/", weatherController.getWeather); 
+router.get("/", weatherController.getCurrentWeather); 
+router.get("/historic", weatherController.getHistoricWeather); 
 
 module.exports = router;

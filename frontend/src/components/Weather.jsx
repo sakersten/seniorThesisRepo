@@ -6,6 +6,7 @@ export default function Weather({ latitude, longitude }) {
   const [forecast, setForecast] = useState([]);
   const [city, setCity] = useState("");
   const [error, setError] = useState("");
+  const [historic, setHistoric] = useState([]);
 
   useEffect(() => {
     if (!latitude || !longitude) return;
@@ -24,12 +25,42 @@ export default function Weather({ latitude, longitude }) {
       .catch(err => setError(err.message));
   }, [latitude, longitude]);
 
+  useEffect(() => {
+    if (!latitude || !longitude) return;
+
+    fetch(
+      `http://localhost:53140/weather/historic` +
+      `?latitude=${latitude}` +
+      `&longitude=${longitude}` +
+      `&start_date=2024-01-01` +
+      `&end_date=2024-01-07`
+    )
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to fetch historic weather");
+        return res.json();
+      })
+      .then(data => {
+        setHistoric(
+          data.daily.time.map((date, index) => ({
+            date,
+            tempMean: data.daily.temperature_2m_mean[index],
+            tempMax: data.daily.temperature_2m_max[index],
+            tempMin: data.daily.temperature_2m_min[index],
+            precipitation: data.daily.precipitation_sum[index]
+          }))
+        );
+      })
+      .catch(err => setError(err.message));
+  }, [latitude, longitude]);
+
   if (error) return <p>Error: {error}</p>;
   if (!forecast.length) return <p>Loading weather...</p>;
 
-  return (
+return (
+  <>
     <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
       <h3>5-Day Forecast for {city}</h3>
+
       <div style={{
         display: 'flex',
         gap: '1rem',
@@ -52,7 +83,9 @@ export default function Weather({ latitude, longitude }) {
               src={`http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
               alt={item.weather[0].description}
             />
-            <p style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{item.main.temp.toFixed(1)}°C</p>
+            <p style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
+              {item.main.temp.toFixed(1)}°C
+            </p>
             <p style={{ color: '#555', fontStyle: 'italic', textTransform: 'capitalize' }}>
               {item.weather[0].description}
             </p>
@@ -60,5 +93,32 @@ export default function Weather({ latitude, longitude }) {
         ))}
       </div>
     </div>
-  );
+
+    <h3 style={{ marginTop: "2rem", textAlign: "center" }}>
+      Typical Weather (Historical)
+    </h3>
+
+    <div style={{
+      display: 'flex',
+      gap: '1rem',
+      flexWrap: 'wrap',
+      justifyContent: 'center'
+    }}>
+      {historic.slice(0, 5).map(day => (
+        <div key={day.date} style={{
+          backgroundColor: '#cbd5db',
+          padding: '1rem',
+          borderRadius: '10px',
+          minWidth: '120px',
+          textAlign: 'center'
+        }}>
+          <p style={{ fontWeight: 'bold' }}>{day.date}</p>
+          <p>⬆ {day.tempMax.toFixed(1)}°C</p>
+          <p>⬇ {day.tempMin.toFixed(1)}°C</p>
+          <p>☔ {day.precipitation} mm</p>
+        </div>
+      ))}
+    </div>
+  </>
+);
 }
