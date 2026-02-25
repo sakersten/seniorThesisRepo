@@ -8,6 +8,15 @@ export default function Weather({ latitude, longitude }) {
   const [error, setError] = useState("");
   const [historic, setHistoric] = useState([]);
 
+  // converting C to F (Celcius base)
+  const convertTemp = (tempC) => (tempC * 9/5) + 32;
+
+  // converting mm to in
+  const convertPrecip = (mm) => mm / 25.4;
+
+  // =======================
+  // FUTURE FORECAST
+  // =======================
   useEffect(() => {
     if (!latitude || !longitude) return;
 
@@ -18,22 +27,74 @@ export default function Weather({ latitude, longitude }) {
       })
       .then(data => {
         setCity(data.city.name);
-        // pick 12:00:00 entries for daily forecast
-        const daily = data.list.filter(item => item.dt_txt.includes("12:00:00"));
+
+        // group forecast entries by date
+        const grouped = {};
+
+        data.list.forEach(item => {
+          const date = item.dt_txt.split(" ")[0];
+
+        if (!grouped[date]) {
+          grouped[date] = {
+            date,
+            tempMax: item.main.temp,
+            tempMin: item.main.temp,
+            icon: item.weather[0].icon,
+            description: item.weather[0].description,
+            precipitation: item.rain?.["3h"] || 0 // precipitation in last 3h
+          };
+        } else {
+          // update max temp + icon/description if this temp is higher
+          if (item.main.temp > grouped[date].tempMax) {
+            grouped[date].tempMax = item.main.temp;
+            grouped[date].icon = item.weather[0].icon;
+            grouped[date].description = item.weather[0].description;
+          }
+
+          // update min temp
+          if (item.main.temp < grouped[date].tempMin) {
+            grouped[date].tempMin = item.main.temp;
+          }
+
+          // add precipitation
+          grouped[date].precipitation += item.rain?.["3h"] || 0;
+        }
+      });
+
+        // convert object to array (only first 5 days)
+        const daily = Object.values(grouped).slice(0, 5);
+
         setForecast(daily);
       })
       .catch(err => setError(err.message));
   }, [latitude, longitude]);
 
+
+  // =======================
+  // HISTORICAL WEATHER
+  // =======================
   useEffect(() => {
-    if (!latitude || !longitude) return;
+    if (!latitude || !longitude || !forecast.length) return;
+
+    // for the historical forecast, want the future forecast dates but just a year previous
+    const firstDate = forecast[0].date;
+    const lastDate = forecast[forecast.length - 1].date;
+
+    const start = new Date(firstDate);
+    const end = new Date(lastDate);
+
+    // subtract one year
+    start.setFullYear(start.getFullYear() - 1);
+    end.setFullYear(end.getFullYear() - 1);
+
+    const formatDate = (d) => d.toISOString().split("T")[0];
 
     fetch(
       `http://localhost:53140/weather/historic` +
       `?latitude=${latitude}` +
       `&longitude=${longitude}` +
-      `&start_date=2024-01-01` +
-      `&end_date=2024-01-07`
+      `&start_date=${formatDate(start)}` +
+      `&end_date=${formatDate(end)}`
     )
       .then(res => {
         if (!res.ok) throw new Error("Failed to fetch historic weather");
@@ -43,7 +104,6 @@ export default function Weather({ latitude, longitude }) {
         setHistoric(
           data.daily.time.map((date, index) => ({
             date,
-            tempMean: data.daily.temperature_2m_mean[index],
             tempMax: data.daily.temperature_2m_max[index],
             tempMin: data.daily.temperature_2m_min[index],
             precipitation: data.daily.precipitation_sum[index]
@@ -51,15 +111,20 @@ export default function Weather({ latitude, longitude }) {
         );
       })
       .catch(err => setError(err.message));
-  }, [latitude, longitude]);
+  }, [forecast, latitude, longitude]);
 
   if (error) return <p>Error: {error}</p>;
   if (!forecast.length) return <p>Loading weather...</p>;
 
+// =======================
+// COMPONENTS
+// =======================
 return (
-  <>
+  <>      
+
+    {/* ================= FUTURE FORECAST ================= */}
     <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h3>5-Day Forecast for {city}</h3>
+      <h3>5-Day Future Forecast for {city}</h3>
 
       <div style={{
         display: 'flex',
@@ -69,8 +134,8 @@ return (
         overflowX: 'auto',
         paddingBottom: '1rem'
       }}>
-        {forecast.map(item => (
-          <div key={item.dt} style={{
+        {forecast.map(day => (
+          <div key={day.date} style={{
             backgroundColor: '#7a8c99',
             padding: '1rem',
             borderRadius: '10px',
@@ -78,24 +143,28 @@ return (
             minWidth: '120px',
             textAlign: 'center'
           }}>
-            <p style={{ fontWeight: 'bold' }}>{item.dt_txt.split(" ")[0]}</p>
+            <p style={{ fontWeight: 'bold' }}>{day.date}</p>
+
             <img
-              src={`http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
-              alt={item.weather[0].description}
+              src={`http://openweathermap.org/img/wn/${day.icon}@2x.png`}
+              alt={day.description}
             />
-            <p style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
-              {item.main.temp.toFixed(1)}°C
-            </p>
+
+            <p>⬆ {convertTemp(day.tempMax).toFixed(1)}°F</p>
+            <p>⬇ {convertTemp(day.tempMin).toFixed(1)}°F</p>
+            <p>☔ {convertPrecip(day.precipitation).toFixed(2)} in</p>
+
             <p style={{ color: '#555', fontStyle: 'italic', textTransform: 'capitalize' }}>
-              {item.weather[0].description}
+              {day.description}
             </p>
           </div>
         ))}
       </div>
     </div>
 
+    {/* ================= HISTORICAL WEATHER ================= */}
     <h3 style={{ marginTop: "2rem", textAlign: "center" }}>
-      Typical Weather (Historical)
+      5-Day Historical Forecast for {city}
     </h3>
 
     <div style={{
@@ -113,9 +182,11 @@ return (
           textAlign: 'center'
         }}>
           <p style={{ fontWeight: 'bold' }}>{day.date}</p>
-          <p>⬆ {day.tempMax.toFixed(1)}°C</p>
-          <p>⬇ {day.tempMin.toFixed(1)}°C</p>
-          <p>☔ {day.precipitation} mm</p>
+
+          <p>⬆ {convertTemp(day.tempMax).toFixed(1)}°F</p>
+          <p>⬇ {convertTemp(day.tempMin).toFixed(1)}°F</p>
+          <p>☔ {convertPrecip(day.precipitation).toFixed(2)} in</p>
+
         </div>
       ))}
     </div>
