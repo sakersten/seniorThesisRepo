@@ -1,24 +1,27 @@
 import React from "react";
-import { NavLink } from "react-router-dom"; // will use when i want to navigate to other pages... keep for now
-import Weather from "../components/Weather";
-
-// create a nice wrapper at the top for each page... maybe?
+import { NavLink } from "react-router-dom";
 
 function Home({ user, onLogout }) {
-  // example coordinates for testing (Paris)
-  const latitude = 48.8566;
-  const longitude = 2.3522;
-
   return (
     <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
       <h2>Welcome, {user.name}!</h2>
+
       <button onClick={onLogout} style={{ marginBottom: "1rem" }}>
-        Log out
+        Logout
       </button>
 
-      {/* Weather Section */}
-      <div style={{ marginTop: "2rem" }}>
-        <Weather latitude={latitude} longitude={longitude} />
+      <div className="nav-container">
+        <NavLink to="/newtrip" className="nav-button">
+          New Trip
+        </NavLink>
+
+        <NavLink to="/upcomingtrips" className="nav-button">
+          Upcoming Trips
+        </NavLink>
+
+        <NavLink to="/closet" className="nav-button">
+          View Closet
+        </NavLink>
       </div>
     </div>
   );

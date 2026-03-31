@@ -33,16 +33,6 @@ const destinationRoutes = require('./routes/destinationRoutes');
 // const packingListRoutes = require('./routes/packingListRoutes');
 const tripRoutes = require('./routes/tripRoutes');
 
-// mount routes
-app.use('/auth', authRoutes);                // login, logout, google oauth
-app.use('/weather', weatherRoutes);          // weather API
-// app.use('/activities', activityRoutes);      // user trip activities
-// app.use('/closet', closetRoutes);            // clothing items in user's closet
-app.use('/destinations', destinationRoutes); // cities, coords, climate info
-// app.use('/packing', packingListRoutes);      // packing list generation & saving
-app.use('/trips', tripRoutes);               // user's trips (start date, end date, etc.)
-
-
 // session configuration
 app.use(session({
   secret: 'secret-secret-secret-secret', // change later to make more secure -> using dotenv maybe?
@@ -56,6 +46,16 @@ app.use((req, res, next) => {
     res.locals.user = req.session.user;
     next();
 });
+
+// mount routes
+app.use('/auth', authRoutes);                // login, logout, google oauth
+app.use('/weather', weatherRoutes);          // weather API
+// app.use('/activities', activityRoutes);      // user trip activities
+// app.use('/closet', closetRoutes);            // clothing items in user's closet
+app.use('/destinations', destinationRoutes); // cities, coords, climate info
+// app.use('/packing', packingListRoutes);      // packing list generation & saving
+app.use('/trips', tripRoutes);               // user's trips (start date, end date, etc.)
+
 
 // serve frontend
 app.use(express.static(path.join(__dirname, '../client/dist')));
