@@ -1,18 +1,23 @@
 'use strict'; 
 
-require('dotenv').config();
+import DBAbstraction from "./db.js"; 
 
-const express = require('express');
-const session = require('express-session');
-const bodyParser = require("body-parser");
-const cors = require('cors');
-const morgan = require('morgan');
-const path = require('path');
+import dotenv from 'dotenv'; 
+dotenv.config(); 
+
+import express from 'express'; 
+import session from 'express-session'; 
+import bodyParser from 'body-parser';
+import cors from 'cors'; 
+import morgan from 'morgan'; 
+import path from 'path'; 
+
+const __dirname = import.meta.dirname;
 
 const app = express();
 const port = 53140; 
 
-const pool = require('./db');
+const db = new DBAbstraction(); 
 
 // middleware
 app.use(morgan('dev')); 
@@ -25,13 +30,13 @@ app.use(cors({
 }));
 
 // import route files -> each one is a group of endpoints
-const authRoutes = require('./routes/authRoutes');
-const weatherRoutes = require('./routes/weatherRoutes'); 
-// const activityRoutes = require('./routes/activityRoutes');
-// const closetRoutes = require('./routes/closetRoutes');
-const destinationRoutes = require('./routes/destinationRoutes');
-// const packingListRoutes = require('./routes/packingListRoutes');
-const tripRoutes = require('./routes/tripRoutes');
+import authRoutes from './routes/authRoutes.js';
+import weatherRoutes from './routes/weatherRoutes.js'; 
+import activityRoutes from './routes/activityRoutes.js';
+import closetRoutes from './routes/closetRoutes.js';
+import destinationRoutes from './routes/destinationRoutes.js';
+//import packingListRoutes from './routes/packingListRoutes.js';
+import tripRoutes from './routes/tripRoutes.js';
 
 // session configuration
 app.use(session({
@@ -41,7 +46,7 @@ app.use(session({
   cookie: { secure: false } // true if using HTTPS
 }));
 
-// attach user sessiojn to res.locals
+// attach user session to res.locals
 app.use((req, res, next) => {
     res.locals.user = req.session.user;
     next();
@@ -50,10 +55,10 @@ app.use((req, res, next) => {
 // mount routes
 app.use('/auth', authRoutes);                // login, logout, google oauth
 app.use('/weather', weatherRoutes);          // weather API
-// app.use('/activities', activityRoutes);      // user trip activities
-// app.use('/closet', closetRoutes);            // clothing items in user's closet
+app.use('/activities', activityRoutes);      // user trip activities
+app.use('/closet', closetRoutes);            // clothing items in user's closet
 app.use('/destinations', destinationRoutes); // cities, coords, climate info
-// app.use('/packing', packingListRoutes);      // packing list generation & saving
+//app.use('/packing', packingListRoutes);      // packing list generation & saving
 app.use('/trips', tripRoutes);               // user's trips (start date, end date, etc.)
 
 

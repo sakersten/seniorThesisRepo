@@ -1,8 +1,12 @@
-const express = require('express');
+import express from "express";
+import tripController from "../controllers/tripController.js";
+
 const router = express.Router();
-const tripController = require('../controllers/tripController');
 
-router.post('/', tripController.createTrip); // POST trips
-router.get('/', tripController.getTrips);    // GET trips
+router.post("/new-trip", tripController.createTrip);                  // create a new trip
+router.get("/upcoming-trips", tripController.getUpcomingTripsByUser); // get all upcoming trips for a given user
+router.get("/past-trips", tripController.getPastTripsByUser);         // get all past trips for a given user
+router.patch("/update-trip/:id", tripController.updateTrip);          // update a trip
+router.delete("/delete/:id", tripController.deleteTrip);              // delete a trip
 
-module.exports = router;
+export default router; 

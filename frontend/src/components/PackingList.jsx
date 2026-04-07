@@ -1,0 +1,1 @@
+// placeholder for the future packing list component; will be in the "upcoming trips details"

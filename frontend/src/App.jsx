@@ -6,6 +6,7 @@ import Home from "./pages/Home.jsx";
 import NewTrip from "./pages/NewTrip.jsx"; 
 import UpcomingTrips from "./pages/UpcomingTrips.jsx"; 
 import Closet from "./pages/Closet.jsx"; 
+import NewClosetItem from "./pages/NewClosetItem.jsx";
 
 function App() {
   const [user, setUser] = useState(null); // store logged-in user info
@@ -38,9 +39,9 @@ function App() {
     }
   };
 
+
   return (
     <Routes>
-      {/* Login page: redirect to home if already logged in */}
       {/* Login page: if already logged in, redirect to Home */}
       <Route
         path="/login"
@@ -69,6 +70,12 @@ function App() {
       <Route
         path="/closet"
         element={user ? <Closet /> : <Navigate to="/login" />}
+      />
+
+      {/* New Closet Item page: form to create a new closet item; requires user */}
+      <Route
+        path="/closet/new"
+        element={user ? <NewClosetItem /> : <Navigate to="/login" />}
       />
 
       {/* Catch-all route: redirect unknown URLs depending on login status */}  

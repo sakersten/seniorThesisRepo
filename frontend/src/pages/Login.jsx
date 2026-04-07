@@ -2,22 +2,29 @@ import React from "react";
 import { GoogleLogin } from "@react-oauth/google";
 
 function Login({ onLogin }) {
-  const handleGoogleLogin = (credentialResponse) => {
+  const handleGoogleLogin = async (credentialResponse) => {
     const token = credentialResponse.credential;
 
-    // decode the JWT token returned by Google to get user info
-    const base64Url = token.split(".")[1];
-    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split("")
-        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-        .join("")
-    );
-    const payload = JSON.parse(jsonPayload);
+    try {
+      const res = await fetch("http://localhost:53140/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ token }),
+      });
 
-    // pass user info back to App
-    onLogin({ name: payload.name, email: payload.email });
+      const data = await res.json();
+
+      if (res.ok) {
+        onLogin(data.user); 
+      } else {
+        console.error("Login failed");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+    }
   };
 
   return (

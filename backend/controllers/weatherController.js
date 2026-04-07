@@ -1,9 +1,9 @@
 // handles the request logic -> reads inputs, calls model functions, and sends responses
 
-const dotenv = require('dotenv');
-dotenv.config(); // do NOT pass './.env', just call dotenv.config()
+import dotenv from 'dotenv'; 
+dotenv.config(); 
 
-exports.getCurrentWeather = async (req, res) => {
+const getCurrentWeather = async (req, res) => {
   const { latitude, longitude } = req.query;
   const apiKey = process.env.OPENWEATHER_API_KEY;
 
@@ -23,7 +23,7 @@ exports.getCurrentWeather = async (req, res) => {
   }
 };
 
-exports.getHistoricWeather = async (req, res) => {
+const getHistoricWeather = async (req, res) => {
   const { latitude, longitude, start_date, end_date } = req.query; 
 
   if (!latitude || !longitude || !start_date || !end_date) {
@@ -50,4 +50,9 @@ exports.getHistoricWeather = async (req, res) => {
     console.error("Historic weather API error:", err);
     res.status(500).json({ error: "Failed to fetch historic weather" });
   }
+};
+
+export default {
+  getCurrentWeather, 
+  getHistoricWeather
 };

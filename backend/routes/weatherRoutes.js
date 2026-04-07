@@ -1,11 +1,11 @@
 // defines the URL endpoints and points each request to the correct controller function
 
-const express = require("express");
-const router = express.Router();
+import express from "express";
+import weatherController from "../controllers/weatherController.js";
 
-const weatherController = require("../controllers/weatherController.js");
+const router = express.Router();
 
 router.get("/", weatherController.getCurrentWeather); 
 router.get("/historic", weatherController.getHistoricWeather); 
 
-module.exports = router;
+export default router; 
