@@ -9,11 +9,12 @@ dotenv.config();
 // create a new closet item
 const createClosetItem = async (req, res) => {
   try {
-    const google_id = req.session.user?.google_id; // get user from session
+    console.log('here');
+    const google_id = req.session.userId; // get user from session
     if (!google_id) {
       return res.status(401).json({ error: "User not logged in" });
     }
-
+    
     const {
       item_category,
       item_sub_category,
@@ -50,7 +51,7 @@ const createClosetItem = async (req, res) => {
 // get all closet items for a given user
 const getClosetItems = async (req, res) => {
   try {
-    const google_id = req.session.user?.google_id;
+    const google_id = req.session.userId; // get user from session
     if (!google_id) {
       return res.status(401).json({ error: "User not logged in" });
     }
@@ -67,7 +68,7 @@ const getClosetItems = async (req, res) => {
 // get all closet items for a given category
 const getClosetByCategory = async (req, res) => {
   try {
-    const google_id = req.session.user?.google_id;
+    const google_id = req.session.userId; // get user from session
     if (!google_id) {
       return res.status(401).json({ error: "User not logged in" });
     }
@@ -95,7 +96,7 @@ const getClosetByCategory = async (req, res) => {
 // get all closet items for a given warmth level
 const getClosetByWeather = async (req, res) => {
   try {
-    const google_id = req.session.user?.google_id;
+    const google_id = req.session.userId; // get user from session
     if (!google_id) {
       return res.status(401).json({ error: "User not logged in" });
     }
@@ -122,7 +123,7 @@ const getClosetByWeather = async (req, res) => {
 // delete for the specific closet item #; needs user id validation too
 const deleteClosetItem = async (req, res) => {
   try {
-    const google_id = req.session.user?.google_id;
+    const google_id = req.session.userId; // get user from session
     if (!google_id) {
       return res.status(401).json({ error: "User not logged in" });
     }

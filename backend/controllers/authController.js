@@ -25,7 +25,6 @@ const googleLogin = async (req, res) => {
         // check if the user exists in PostgreSQL
         let result = await db.findUser(googleId);
 
-        console.log("2"); 
         if (result === false) {
             // new user -> insert
             const insertResult = await db.insertNewUser(googleId, email, name); 

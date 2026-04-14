@@ -222,7 +222,8 @@ class DBAbstraction {
         client = await this.pool.connect();
         const sql = `
           SELECT *
-          FROM public."activities";
+          FROM public."activities"
+          ORDER BY name;
         `;
 
         const response = await client.query(sql);
@@ -279,6 +280,28 @@ class DBAbstraction {
 
       const result = await client.query(sql, [google_id]);
       return result.rows;
+
+    } catch (err) {
+      throw err;
+    } finally {
+      if (client) client.release();
+    }
+  }
+
+  // get all information about a specific trip using the id
+  async getTripDetailsById(trip_id, google_id) {
+    let client; 
+
+    try {
+      client = await this.pool.connect();
+      const sql = `
+        SELECT *
+        FROM public."trips"
+        WHERE trip_id = $1 AND google_id = $2
+      `;
+
+      const result = await client.query(sql, [trip_id, google_id]);
+      return result.rows[0];
 
     } catch (err) {
       throw err;
@@ -376,76 +399,270 @@ class DBAbstraction {
 
   // get all countries 
   async getCountries() {
-    const result = await this.pool.query(`
-      SELECT id, name
-      FROM public."countries"
-      ORDER BY name ASC;
-    `);
-    return result.rows;
+    let client; 
+    try {
+      client = await this.pool.connect(); 
+  
+      const sql = await client.query(`
+        SELECT id, name
+        FROM public."countries"
+        ORDER BY name ASC;
+      `);
+
+      return sql.rows;
+
+    } catch (err) {
+      throw err;
+    } finally {
+      if (client) client.release();
+    }
   }
 
   // get all states by country id
   async getStatesByCountry(countryId) {
-    const result = await this.pool.query(`
-      SELECT id, name
-      FROM public."states"
-      WHERE country_id = $1
-      ORDER BY name ASC;
-    `, [countryId]);
+    let client; 
+    try {
+      client = await this.pool.connect(); 
+  
+      const sql = await client.query(`
+        SELECT id, name
+        FROM public."states"
+        WHERE country_id = $1
+        ORDER BY name ASC;
+      `,[countryId]);
 
-    return result.rows;
+      return sql.rows;
+
+    } catch (err) {
+      throw err;
+    } finally {
+      if (client) client.release();
+    }
   }
 
   // get all cities by state id (if applicable)
   async getCitiesByState(stateId) {
-    const result = await this.pool.query(`
-      SELECT id, name
-      FROM public."cities"
-      WHERE state_id = $1
-      ORDER BY name ASC
-    `, [stateId]);
+    let client; 
+    try {
+      client = await this.pool.connect(); 
+  
+      const sql = await client.query(`
+        SELECT id, name
+        FROM public."cities"
+        WHERE state_id = $1
+        ORDER BY name ASC
+      `,[stateId]);
 
-    return result.rows;
+      return sql.rows;
+
+    } catch (err) {
+      throw err;
+    } finally {
+      if (client) client.release();
+    }
   }
 
   // get all cities by country id (if state is not applicable)
   async getCitiesByCountry(countryId) {
-    const result = await this.pool.query(`
-      SELECT id, name
-      FROM public."cities"
-      WHERE country_id = $1
-      ORDER BY name ASC
-    `, [countryId]);
+    let client; 
+    try {
+      client = await this.pool.connect(); 
+  
+      const sql = await client.query(`
+        SELECT id, name
+        FROM public."cities"
+        WHERE country_id = $1
+        ORDER BY name ASC
+      `,[countryId]);
 
-    return result.rows;
+      return sql.rows;
+
+    } catch (err) {
+      throw err;
+    } finally {
+      if (client) client.release();
+    }
   }
 
-  // // get all destinations by user 
-  // async getAllDestinationsByUser(google_id) {
-  //   const result = await this.pool.query(`
-  //     TO-DO
-  //   `, [google_id]);
+  // get all destinations for a specific trip
+  async getDestinationsByTrip(trip_id, google_id) {
+    let client;
+    try {
+      client = await this.pool.connect();
 
-  //   return result.rows;
-  // }
+      const sql = `
+        SELECT public."destinations".*
+        FROM public."destinations"
+        JOIN public."trips"
+          ON public."destinations".trip_id = public."trips".trip_id
+        WHERE public."destinations".trip_id = $1
+          AND public."trips".google_id = $2
+        ORDER BY public."destinations".order_index ASC;
+      `;
+
+      const result = await client.query(sql, [trip_id, google_id]);
+      return result.rows;
+
+    } catch (err) {
+      throw err;
+    } finally {
+      if (client) client.release();
+    }
+  }
+
+  // create a new destination in a trip
+  // TO-DO: Add error handling for if destination dates are outside of trip scope
+  //        OR if destination dates overlap (they can only overlap by one day, since 
+  //        you may be leaving for a new location)
+  async createDestination({trip_id, destination_name, start_date, end_date, order_index, notes,
+    city_id, state_id, country_id, google_id, activity_ids }) {
+    let client;
+
+    try {
+      client = await this.pool.connect();
+
+      await client.query("BEGIN");
+
+      // 1. insert destination
+      const sql = `
+        INSERT INTO public."destinations"
+          (trip_id, destination_name, start_date, end_date, order_index, notes, city_id, state_id, country_id)
+        SELECT $1,$2,$3,$4,$5,$6,$7,$8,$9
+        FROM public."trips"
+        WHERE trip_id = $1 AND google_id = $10
+        RETURNING *;
+      `;
+
+      const result = await client.query(sql, [
+        trip_id,
+        destination_name,
+        start_date,
+        end_date,
+        order_index,
+        notes,
+        city_id,
+        state_id,
+        country_id,
+        google_id
+      ]);
+
+      const newDestination = result.rows[0];
+
+      // if unauthorized or failed
+      if (!newDestination) {
+        await client.query("ROLLBACK");
+        return null;
+      }
+
+      const destination_id = newDestination.destination_id;
+
+      // 2. insert activities into join table
+      if (activity_ids && activity_ids.length > 0) {
+        for (const activity_id of activity_ids) {
+          await client.query(
+            `
+            INSERT INTO public."destination_activities"
+              (destination_id, activity_id)
+            VALUES ($1, $2)
+            `,
+            [destination_id, activity_id]
+          );
+        }
+      }
+
+      await client.query("COMMIT");
+
+      return newDestination;
+
+    } catch (err) {
+      if (client) await client.query("ROLLBACK");
+      throw err;
+    } finally {
+      if (client) client.release();
+    }
+  }
 
   // delete destination
-  async removeTripDestination(trip_id, google_id) {
-    const result = await this.pool.query(`
-      UPDATE trips
-      SET city_id = NULL
-      WHERE id = $1 AND google_id = $2
-      RETURNING *;
-    `, [trip_id, google_id]);
+  async removeTripDestination(destination_id, google_id) {
+    let client; 
 
-    return result.rows[0];
+    try {
+      client = await this.pool.connect(); 
+
+      const sql = `
+      DELETE FROM public."destinations"
+      USING public."trips"
+      WHERE destination_id = $1
+        AND destination.trip_id = trip.trip_id
+        AND trip.google_id = $2
+      RETURNING *
+    `;
+
+    const result = await client.query(sql, [destination_id, google_id]);
+
+    return result.rows[0]; // undefined if nothing deleted / not authorized
+
+    } catch (err) {
+      throw err;
+    } finally {
+      if (client) client.release();
+    }
   }
 
   // ============================================
-  // DESTINATION ACTIVITIES METHODS
+  // DESTINATION ACTIVITY METHODS
   // ============================================
 
-  // to-do :)
+  // add a new activity to a destination
+  async addActivitiesToDestination(destination_id, activity_ids) {
+    let client;
+
+    try {
+      client = await this.pool.connect();
+
+      const sql = `
+        INSERT INTO public."destination_activities" (destination_id, activity_id)
+        VALUES ($1, $2)
+        ON CONFLICT (destination_id, activity_id) DO NOTHING
+      `;
+
+      for (let activity_id of activity_ids) {
+        await client.query(sql, [destination_id, activity_id]);
+      }
+
+    } catch (err) {
+      throw err;
+    } finally {
+      if (client) client.release();
+    }
+  }
+
+  async getActivitiesForDestination(destination_id) {
+    let client;
+
+    try {
+      client = await this.pool.connect();
+
+      const sql = `
+        SELECT activities.activity_id, activities.name
+        FROM public."destination_activities"
+        JOIN public."activities"
+          ON destination_activities.activity_id = activities.activity_id
+        WHERE destination_activities.destination_id = $1
+        ORDER BY activities.name ASC
+      `;
+
+      const result = await client.query(sql, [destination_id]);
+
+      return result.rows;
+
+    } catch (err) {
+      throw err;
+    } finally {
+      if (client) client.release();
+    }
+  }
+
 }
 
 export default DBAbstraction;

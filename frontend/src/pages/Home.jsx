@@ -11,11 +11,11 @@ function Home({ user, onLogout }) {
       </button>
 
       <div className="nav-container">
-        <NavLink to="/newtrip" className="nav-button">
+        <NavLink to="/new-trip" className="nav-button">
           New Trip
         </NavLink>
 
-        <NavLink to="/upcomingtrips" className="nav-button">
+        <NavLink to="/upcoming-trips" className="nav-button">
           Upcoming Trips
         </NavLink>
 

@@ -76,49 +76,115 @@ const getAllCitiesByCountry = async (req, res) => {
   }
 };
 
-// // TO-DO
-// // get all destinations for a given user
-// const getAllDestinationsByUser = async (req, res) => {
-//   try {
-//     const google_id = req.session.user?.google_id;
-
-//     if (!google_id) {
-//       return res.status(401).json({ error: "User not logged in" });
-//     }
-
-//     const destinations = await db.getAllDestinationsByUser(google_id);
-
-//     res.json(destinations);
-
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-
-// still needs to be tested
-// delete destination
-const deleteDestination = async (req, res) => {
+// get all destinations for a specific trip
+const getDestinationsByTrip = async (req, res) => {
   try {
-    const google_id = req.session.user?.google_id;
+    const google_id = req.session.userId;
+    const { tripId } = req.params;
 
     if (!google_id) {
       return res.status(401).json({ error: "User not logged in" });
     }
 
-    const trip_id = req.params.id;
+    const destinations = await db.getDestinationsByTrip(tripId, google_id);
 
-    const updatedTrip = await db.removeTripDestination(trip_id, google_id);
+    res.json(destinations);
 
-    if (!updatedTrip) {
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// create a new destination in a trip
+const createDestination = async (req, res) => {
+  try {
+    const google_id = req.session.userId;
+
+    if (!google_id) {
+      return res.status(401).json({ error: "User not logged in" });
+    }
+
+    const {
+      trip_id,
+      destination_name,
+      start_date,
+      end_date,
+      order_index,
+      notes,
+      city_id,
+      state_id,
+      country_id, 
+      activity_ids
+    } = req.body;
+
+    const errors = [];
+
+    // validation checks
+    if (!start_date) errors.push("Start date is required");
+    if (!end_date) errors.push("End date is required");
+
+    if (start_date && end_date) {
+      const start = new Date(start_date);
+      const end = new Date(end_date);
+
+      if (start > end) {
+        errors.push("Start date cannot be after end date");
+      }
+    }
+
+    if (!city_id) {
+      errors.push("City is required");
+    }
+
+    if (errors.length > 0) {
+      return res.status(400).json({ error: errors });
+    }
+
+    const newDestination = await db.createDestination({
+      trip_id,
+      destination_name,
+      start_date,
+      end_date,
+      order_index,
+      notes,
+      city_id,
+      state_id,
+      country_id,
+      google_id,
+      activity_ids
+    });
+
+    res.status(201).json(newDestination);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// delete destination
+const deleteDestination = async (req, res) => {
+  try {
+    const google_id = req.session.userId;
+
+    if (!google_id) {
+      return res.status(401).json({ error: "User not logged in" });
+    }
+
+    const destination_id = req.params.id;
+
+    const updatedDestination = await db.removeTripDestination(destination_id, google_id);
+
+    if (!updatedDestination) {
       return res.status(404).json({
-        error: "Trip not found or not authorized"
+        error: "Destination not found or not authorized"
       });
     }
 
     res.json({
       message: "Destination removed",
-      trip: updatedTrip
+      destination_id: destination_id
     });
 
   } catch (err) {
@@ -132,6 +198,7 @@ export default {
   getAllStatesByCountry, 
   getAllCitiesByState, 
   getAllCitiesByCountry, 
-  //getAllDestinationsByUser, 
+  getDestinationsByTrip, 
+  createDestination,  
   deleteDestination
 }

@@ -5,6 +5,8 @@ import Login from "./pages/Login.jsx";
 import Home from "./pages/Home.jsx";
 import NewTrip from "./pages/NewTrip.jsx"; 
 import UpcomingTrips from "./pages/UpcomingTrips.jsx"; 
+import NewDestinations from "./pages/NewDestinations.jsx";
+import TripDetails from "./pages/TripDetails.jsx";
 import Closet from "./pages/Closet.jsx"; 
 import NewClosetItem from "./pages/NewClosetItem.jsx";
 
@@ -39,7 +41,6 @@ function App() {
     }
   };
 
-
   return (
     <Routes>
       {/* Login page: if already logged in, redirect to Home */}
@@ -56,14 +57,26 @@ function App() {
 
       {/* New Trip page: form to create a new trip; requires user */}
       <Route
-        path="/newtrip"
+        path="/new-trip"
         element={user ? <NewTrip /> : <Navigate to="/login" />}
       />
 
       {/* Upcoming Trips page: view all upcoming trips; requires user */}
       <Route
-        path="/upcomingtrips"
+        path="/upcoming-trips"
         element={user ? <UpcomingTrips /> : <Navigate to="/login" />}
+      />
+
+      {/* Trip Details page: view details for a specific upcoming trip; requires user */}
+      <Route
+        path="/trips/:tripId"
+        element={user ? <TripDetails /> : <Navigate to="/login" />}
+      />
+
+      {/* New Destinations page: add destinations for a specific trip; requires user */}
+      <Route
+        path="/trips/:tripId/add-destination"
+        element={user ? <NewDestinations /> : <Navigate to="/login" />}
       />
 
       {/* Closet page: view closet items; requires user */}
@@ -74,7 +87,7 @@ function App() {
 
       {/* New Closet Item page: form to create a new closet item; requires user */}
       <Route
-        path="/closet/new"
+        path="/new-closet-item"
         element={user ? <NewClosetItem /> : <Navigate to="/login" />}
       />
 
