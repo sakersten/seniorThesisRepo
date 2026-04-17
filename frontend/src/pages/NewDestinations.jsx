@@ -1,19 +1,45 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import Select from "react-select"; // for search dropdown select
+
 
 function NewDestinations() {
   const navigate = useNavigate();
   const { tripId } = useParams();
 
+  const [countries, setCountries] = useState([]);
+  const [states, setStatesMap] = useState({});
+  const [cities, setCitiesMap] = useState({});
+  
+  const [activities, setActivities] = useState([]);
+
+  const countryOptions = countries.map(country => ({
+    value: country.id,
+    label: country.name
+  }));
+
+  const getStateOptions = (index) => {
+    return (states[index] || []).map(state => ({
+      value: state.id,
+      label: state.name
+    }));
+  };
+
+  const getCityOptions = (index) => {
+    return (cities[index] || []).map(city => ({
+      value: city.id,
+      label: city.name
+    }));
+  };
+
+  const activityOptions = activities.map(activity => ({
+    value: activity.activity_id,
+    label: activity.name
+  }));
+
   const [destinations, setDestinations] = useState([
     { country_id: "", state_id: "", city_id: "", start_date: "", end_date: "", notes: "", activity_ids: [] }
   ]);
-
-  const [countries, setCountries] = useState([]);
-  const [statesMap, setStatesMap] = useState({});
-  const [citiesMap, setCitiesMap] = useState({});
-  
-  const [activities, setActivities] = useState([]);
 
   // fetch countries on load
   useEffect(() => {
@@ -29,7 +55,6 @@ function NewDestinations() {
       .then(res => res.json())
       .then(data => setActivities(data))
       .catch(err => console.error("Error fetching activities:", err));
-      setActivities([]);
   }, []);
 
   // update destination field
@@ -43,7 +68,7 @@ function NewDestinations() {
 
   // add a new destination form 
   const addDestination = () => {
-    setDestinations(latestState => [...latestState, { country_id: "", state_id: "", city_id: "", start_date: "", end_date: "", notes: "" }]);
+    setDestinations(latestState => [...latestState, { country_id: "", state_id: "", city_id: "", start_date: "", end_date: "", notes: "", activity_ids: []}]);
   };
 
   // remove a destination
@@ -65,9 +90,14 @@ function NewDestinations() {
   const validateForm = () => {
     const errors = [];
 
-    // at least one destination with city
-    const hasDestination = destinations.some(dest => dest.city_id);
-    if (!hasDestination) errors.push("At least one destination must be selected");
+    // have a country, state, or city input -> not all countries have states; not all countries have cities (ex: Anartica)
+    const hasDestination = destinations.some(
+      dest => dest.country_id || dest.state_id || dest.city_id
+    );
+
+    if (!hasDestination) {
+      errors.push("At least one country, state, or city must be selected");
+    }
 
     // check each destination's start/end dates
     destinations.forEach((dest, index) => {
@@ -94,19 +124,37 @@ function NewDestinations() {
       for (let index = 0; index < destinations.length; index++) {
         const dest = destinations[index];
 
-        if (!dest.city_id) continue; // skip incomplete
+        if (!dest.country_id && !dest.state_id && !dest.city_id) continue;
 
         const countryName = countries.find(country => country.id === dest.country_id)?.name || "";
-        const stateName = statesMap[index]?.find(state => state.id == dest.state_id)?.name || "";
-        const cityName = citiesMap[index]?.find(city => city.id === dest.city_id)?.name || "";
+        const stateName = states[index]?.find(state => state.id == dest.state_id)?.name || "";
+        const cityName = cities[index]?.find(city => city.id === dest.city_id)?.name || "";
+        
+        // piece together the destination name 
+        const parts = [];
+        if (cityName) parts.push(cityName);
+        if (stateName) parts.push(stateName);
+        if (countryName) parts.push(countryName);
+        const destination_name = parts.join(", ");
 
-        const destination_name = cityName + (stateName ? `, ${stateName}` : "") + `, ${countryName}`;
+        // piece together items to return to db (nulls if blank)
+        const payload = {
+          trip_id: Number(tripId),
+          destination_name,
+          country_id: dest.country_id || null,
+          state_id: dest.state_id || null,
+          city_id: dest.city_id || null,
+          start_date: dest.start_date || null,
+          end_date: dest.end_date || null,
+          notes: dest.notes || null,
+          activity_ids: dest.activity_ids || []
+        };
 
         const destRes = await fetch("http://localhost:53140/destinations/new-destination", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({ ...dest, trip_id: tripId, destination_name }),
+          body: JSON.stringify(payload),
         });
 
         if (!destRes.ok) {
@@ -134,73 +182,76 @@ function NewDestinations() {
           <div key={index} className="form-box" style={{ gap: "0.5rem" }}>
             <h3>Destination #{index + 1}</h3>
 
-            {/* Sprint #3 task */}
-            {/* TO-DO: Add a "search" effect that only shows destinations that start with that letter as you type it 
-            EX: Typing "United" would only show United Arab Emirates, United Kingdom, and United States */}
-            {/* Also add this feature to states and cities */}
-
             {/* Country */}
             <div className="form-group">
               <label>Country</label>
-              <select
-                value={dest.country_id}
-                onChange={async (event) => {
-                  const countryId = event.target.value;
+
+              {/* Search Input */}
+              <Select
+                options={countryOptions}
+                placeholder="Select Country"
+                value={countryOptions.find(opt => opt.value === dest.country_id) || null}
+                onChange={async (selectedOption) => {
+                  const countryId = selectedOption.value;
+
+                  // set selected value 
                   handleDestinationChange(index, "country_id", countryId);
                   handleDestinationChange(index, "state_id", "");
                   handleDestinationChange(index, "city_id", "");
 
+                  // fetch states 
                   const resStates = await fetch(`http://localhost:53140/destinations/states/${countryId}`);
                   const statesData = await resStates.json();
-                  setStatesMap(latest => ({ ...latest, [index]: statesData }));
+                  setStatesMap(latestState => ({ ...latestState, [index]: statesData }));
 
                   // if there are no states, then fetch cities for the country
                   if (statesData.length === 0) {
                     const resCities = await fetch(`http://localhost:53140/destinations/cities/country/${countryId}`);
                     const citiesData = await resCities.json();
-                    setCitiesMap(latest => ({ ...latest, [index]: citiesData }));
+                    setCitiesMap(latestState => ({ ...latestState, [index]: citiesData }));
                   } else {
-                    setCitiesMap(latest => ({ ...latest, [index]: [] }));
+                    setCitiesMap(latestState => ({ ...latestState, [index]: [] }));
                   }
                 }}
-              >
-                <option value="">Select Country</option>
-                {countries.map(country => <option key={country.id} value={country.id}>{country.name}</option>)}
-              </select>
+                isSearchable
+              />
             </div>
 
             {/* State */}
-            {statesMap[index]?.length > 0 && (
+            {states[index]?.length > 0 && (
               <div className="form-group">
                 <label>State</label>
-                <select
-                  value={dest.state_id}
-                  onChange={async (event) => {
-                    const stateId = event.target.value;
+                <Select
+                  options={getStateOptions(index)}
+                  placeholder="Select State"
+                  value={getStateOptions(index).find(opt => opt.value === dest.state_id) || null}
+                  onChange={async (selectedOption) => {
+                    const stateId = selectedOption.value;
+
                     handleDestinationChange(index, "state_id", stateId);
                     handleDestinationChange(index, "city_id", "");
 
                     const resCities = await fetch(`http://localhost:53140/destinations/cities/state/${stateId}`);
                     const citiesData = await resCities.json();
-                    setCitiesMap(latest => ({ ...latest, [index]: citiesData }));
+                    setCitiesMap(latestState => ({ ...latestState, [index]: citiesData }));
                   }}
-                >
-                  <option value="">Select State</option>
-                  {statesMap[index].map(state => <option key={state.id} value={state.id}>{state.name}</option>)}
-                </select>
+                  isSearchable
+                />
               </div>
             )}
 
             {/* City */}
             <div className="form-group">
               <label>City</label>
-              <select
-                value={dest.city_id}
-                onChange={(event) => handleDestinationChange(index, "city_id", event.target.value)}
-              >
-                <option value="">Select City</option>
-                {citiesMap[index]?.map(city => <option key={city.id} value={city.id}>{city.name}</option>)}
-              </select>
+              <Select
+                options={getCityOptions(index)}
+                placeholder="Select City"
+                value={getCityOptions(index).find(opt => opt.value === dest.city_id) || null}
+                onChange={(selectedOption) => {
+                  handleDestinationChange(index, "city_id", selectedOption.value);
+                }}
+                isSearchable
+              />
             </div>
 
             {/* Start/End Dates */}
@@ -219,45 +270,41 @@ function NewDestinations() {
               <textarea value={dest.notes} onChange={event => handleDestinationChange(index, "notes", event.target.value)} />
             </div>
 
+            {/* Activities */}
             <div className="form-group">
               <label>Activities</label>
-              <select
-                multiple
-                value={dest.activity_ids}
-                onChange={(e) => {
-                  const selectedValues = Array.from(e.target.selectedOptions).map(opt =>
-                    Number(opt.value)
+              <Select
+                isMulti
+                options={activityOptions}
+                value={activityOptions.filter(opt =>
+                  dest.activity_ids.includes(opt.value)
+                )}
+                onChange={(selectedOptions) => {
+                  handleDestinationChange(
+                    index,
+                    "activity_ids",
+                    selectedOptions ? selectedOptions.map(s => s.value) : []
                   );
-
-                  handleDestinationChange(index, "activity_ids", selectedValues);
                 }}
-                style={{ height: "120px" }} // optional for visibility
-              >
-                {activities.map(activity => (
-                  <option key={activity.activity_id} value={activity.activity_id}>
-                    {activity.name}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
 
-            <button type="button" className="form-button" onClick={() => removeDestination(index)}>
-              Remove Destination
-            </button>
-          </div>
-        ))}
+          <button type="button" className="form-button" onClick={() => removeDestination(index)}>
+            Cancel
+          </button>
+        </div>
+      ))}
 
+      <div className="button-row">
         <button type="button" className="form-button" onClick={addDestination}>
           + Add Destination
         </button>
-
-        <button type="button" onClick={handleSubmit}>
+        <button type="button" className="save-button" onClick={handleSubmit}>
           Save Destinations
         </button>
-
       </div>
     </div>
-  );
-}
+  </div>
+)};
 
 export default NewDestinations;

@@ -110,7 +110,6 @@ const createDestination = async (req, res) => {
       destination_name,
       start_date,
       end_date,
-      order_index,
       notes,
       city_id,
       state_id,
@@ -120,33 +119,16 @@ const createDestination = async (req, res) => {
 
     const errors = [];
 
-    // validation checks
-    if (!start_date) errors.push("Start date is required");
-    if (!end_date) errors.push("End date is required");
+    // validation: check for required fields
+    if (!start_date) errors.push("Start date is required.");
+    if (!end_date) errors.push("End date is required.");
 
-    if (start_date && end_date) {
-      const start = new Date(start_date);
-      const end = new Date(end_date);
-
-      if (start > end) {
-        errors.push("Start date cannot be after end date");
-      }
-    }
-
-    if (!city_id) {
-      errors.push("City is required");
-    }
-
-    if (errors.length > 0) {
-      return res.status(400).json({ error: errors });
-    }
-
+    // date checks occur within the createDestination db.js function
     const newDestination = await db.createDestination({
       trip_id,
       destination_name,
       start_date,
       end_date,
-      order_index,
       notes,
       city_id,
       state_id,

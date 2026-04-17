@@ -497,7 +497,7 @@ class DBAbstraction {
           ON public."destinations".trip_id = public."trips".trip_id
         WHERE public."destinations".trip_id = $1
           AND public."trips".google_id = $2
-        ORDER BY public."destinations".order_index ASC;
+        ORDER BY public."destinations".start_date ASC;
       `;
 
       const result = await client.query(sql, [trip_id, google_id]);
@@ -510,11 +510,9 @@ class DBAbstraction {
     }
   }
 
+  // TO-DO: figure out date issues.. why is the start date/end date for trips failing yet, despite all of these checks?
   // create a new destination in a trip
-  // TO-DO: Add error handling for if destination dates are outside of trip scope
-  //        OR if destination dates overlap (they can only overlap by one day, since 
-  //        you may be leaving for a new location)
-  async createDestination({trip_id, destination_name, start_date, end_date, order_index, notes,
+  async createDestination({trip_id, destination_name, start_date, end_date, notes,
     city_id, state_id, country_id, google_id, activity_ids }) {
     let client;
 
@@ -523,13 +521,74 @@ class DBAbstraction {
 
       await client.query("BEGIN");
 
-      // 1. insert destination
+      // 1. get trip (also enforces ownership)
+      const tripRes = await client.query(
+        `SELECT start_date, end_date
+        FROM public."trips"
+        WHERE trip_id = $1 AND google_id = $2`,
+        [trip_id, google_id]
+      );
+
+      const trip = tripRes.rows[0];
+
+      if (!trip) {
+        await client.query("ROLLBACK");
+        return null;
+      }
+
+      const tripStart = trip.start_date;
+      const tripEnd = trip.end_date;
+
+      // 2. validate input exists
+      if (!start_date || !end_date) {
+        await client.query("ROLLBACK");
+        throw new Error("Start and end dates are required.");
+      }
+
+      // 3. validate date order
+      if (start_date > end_date) {
+        await client.query("ROLLBACK");
+        throw new Error("Start date must be before or equal to end date.");
+      }
+
+      // 4. validate within trip bounds (STRING compare works for DATE)
+      if (start_date < tripStart || end_date > tripEnd) {
+        await client.query("ROLLBACK");
+        throw new Error("Destination must be within trip date range.");
+      }
+
+      // 5. fetch existing destinations for overlap check
+      const existingRes = await client.query(
+        `SELECT start_date, end_date
+        FROM public."destinations"
+        WHERE trip_id = $1`,
+        [trip_id]
+      );
+
+      // 6. destination overlap check (only one day overlap allowed for destination transitions)
+      for (const d of existingRes.rows) {
+        const existingStart = d.start_date;
+        const existingEnd = d.end_date;
+
+        const overlaps =
+          start_date < existingEnd &&
+          end_date > existingStart;
+
+        if (overlaps) {
+          await client.query("ROLLBACK");
+          throw new Error(
+            "Destination dates overlap an existing destination. Same-day transitions are allowed."
+          );
+        }
+      }
+
+      // 8. insert destination
       const sql = `
         INSERT INTO public."destinations"
-          (trip_id, destination_name, start_date, end_date, order_index, notes, city_id, state_id, country_id)
-        SELECT $1,$2,$3,$4,$5,$6,$7,$8,$9
+          (trip_id, destination_name, start_date, end_date, notes, city_id, state_id, country_id)
+        SELECT $1,$2,$3,$4,$5,$6,$7,$8
         FROM public."trips"
-        WHERE trip_id = $1 AND google_id = $10
+        WHERE trip_id = $1 AND google_id = $9
         RETURNING *;
       `;
 
@@ -538,7 +597,6 @@ class DBAbstraction {
         destination_name,
         start_date,
         end_date,
-        order_index,
         notes,
         city_id,
         state_id,
@@ -556,7 +614,7 @@ class DBAbstraction {
 
       const destination_id = newDestination.destination_id;
 
-      // 2. insert activities into join table
+      // 9. insert activities into join table
       if (activity_ids && activity_ids.length > 0) {
         for (const activity_id of activity_ids) {
           await client.query(
@@ -571,7 +629,6 @@ class DBAbstraction {
       }
 
       await client.query("COMMIT");
-
       return newDestination;
 
     } catch (err) {
@@ -585,7 +642,6 @@ class DBAbstraction {
   // delete destination
   async removeTripDestination(destination_id, google_id) {
     let client; 
-
     try {
       client = await this.pool.connect(); 
 

@@ -199,6 +199,27 @@ input[type="range"] {
   transform: translateY(0);
 }
 
+/* Save Button */ 
+.save-button {
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 10px;
+  background: rgb(30, 130, 30);
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.save-button:hover {
+  background: rgb(0, 107, 0);
+  transform: translateY(-1px);
+}
+
+.save-button:active {
+  transform: translateY(0);
+}
+
 /* Dropdowns */
 select {
   width: 100%;
@@ -263,4 +284,11 @@ select:focus {
 .table tbody tr:hover {
   background-color: #f1f5ff;
   transition: background-color 0.2s ease;
+}
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
 }
