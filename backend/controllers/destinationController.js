@@ -145,7 +145,17 @@ const createDestination = async (req, res) => {
   }
 };
 
-// delete destination
+// update specific destination
+const updateDestination = async (req, res) => {
+  try {
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+}
+
+// delete specific destination
 const deleteDestination = async (req, res) => {
   try {
     const google_id = req.session.userId;
@@ -182,5 +192,6 @@ export default {
   getAllCitiesByCountry, 
   getDestinationsByTrip, 
   createDestination,  
+  updateDestination, 
   deleteDestination
 }

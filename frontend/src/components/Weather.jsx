@@ -74,7 +74,7 @@ export default function Weather({ latitude, longitude }) {
   // HISTORICAL WEATHER
   // =======================
   useEffect(() => {
-    if (!latitude || !longitude || !forecast.length) return;
+    if (!latitude || !longitude) return;
 
     // for the historical forecast, want the future forecast dates but just a year previous
     const firstDate = forecast[0].date;

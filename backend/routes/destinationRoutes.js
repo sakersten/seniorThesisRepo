@@ -14,6 +14,7 @@ router.get("/cities/country/:countryId", destinationController.getAllCitiesByCou
 // destination routes for user functionality
 router.get("/trip/:tripId", destinationController.getDestinationsByTrip); 
 router.post("/new-destination", destinationController.createDestination); 
+router.put("/update/:id", destinationController.updateDestination); 
 router.delete("/delete/:id", destinationController.deleteDestination); 
 
 export default router; 

@@ -490,19 +490,37 @@ class DBAbstraction {
     try {
       client = await this.pool.connect();
 
+      // pulling longitude/latitude for weather APIs
       const sql = `
-        SELECT public."destinations".*
+        SELECT public."destinations".*, 
+          COALESCE(
+            public."cities".latitude,
+            public."states".latitude,
+            public."countries".latitude
+          ) AS latitude,
+          COALESCE(
+            public."cities".longitude,
+            public."states".longitude,
+            public."countries".longitude
+          ) AS longitude
         FROM public."destinations"
         JOIN public."trips"
           ON public."destinations".trip_id = public."trips".trip_id
+        LEFT JOIN public."cities"
+          ON public."destinations".city_id = public."cities".id
+        LEFT JOIN public."states"
+          ON public."destinations".state_id = public."states".id
+        LEFT JOIN public."countries"
+          ON public."destinations".country_id = public."countries".id
         WHERE public."destinations".trip_id = $1
           AND public."trips".google_id = $2
         ORDER BY public."destinations".start_date ASC;
       `;
 
       const result = await client.query(sql, [trip_id, google_id]);
+      //console.log(result.rows);
       return result.rows;
-
+      
     } catch (err) {
       throw err;
     } finally {

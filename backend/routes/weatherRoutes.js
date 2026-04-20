@@ -5,7 +5,7 @@ import weatherController from "../controllers/weatherController.js";
 
 const router = express.Router();
 
-router.get("/", weatherController.getCurrentWeather); 
+router.get("/current", weatherController.getForecastWeather); 
 router.get("/historic", weatherController.getHistoricWeather); 
 
 export default router; 
