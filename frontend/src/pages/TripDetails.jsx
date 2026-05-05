@@ -9,7 +9,12 @@ function TripDetails() {
   const [destinations, setDestinations] = useState([]);
   const [destinationActivities, setDestinationActivities] = useState({});
 
-  // fetch trip + destinations
+  const [packingList, setPackingList] = useState(null);
+  const [packingLoading, setPackingLoading] = useState(false);
+  const [packingError, setPackingError] = useState(null);
+
+
+  // fetch trip + destinations + existing packing list
   useEffect(() => {
     // get trip details
     fetch(`http://localhost:53140/trips/${tripId}`, {
@@ -25,6 +30,25 @@ function TripDetails() {
     })
       .then(res => res.json())
       .then(data => setDestinations(data))
+      .catch(err => console.error(err));    
+    
+    // load existing packing list if one was already generated
+    fetch(`http://localhost:53140/packing/${tripId}`, {
+      credentials: "include"
+    })
+      .then(res => {
+        if (res.ok) return res.json();
+        return null;
+      })
+      .then(data => {
+        if (data) {
+          setPackingList({
+            recommended: data.items,
+            notRecommended: [],
+            conditions: data.conditions,
+          });
+        }
+      })
       .catch(err => console.error(err));
   }, [tripId]);
 
@@ -38,7 +62,6 @@ function TripDetails() {
       })
         .then(res => res.json())
         .then(data => {
-          console.log("ACTIVITY RESPONSE:", destination.destination_id, data);
           setDestinationActivities(latestState => ({
             ...latestState,
             [destination.destination_id]: data
@@ -47,6 +70,32 @@ function TripDetails() {
         .catch(err => console.error(err));
     });
   }, [destinations]);
+
+  const handleGeneratePackingList = async () => {
+    try {
+      setPackingLoading(true);
+      setPackingError(null);
+
+      const res = await fetch(`http://localhost:53140/packing/generate/${tripId}`, {
+        method: "POST",
+        credentials: "include"
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to generate packing list");
+      }
+
+      const data = await res.json();
+      setPackingList(data);
+
+    } catch (err) {
+      console.error(err);
+      setPackingError(err.message);
+    } finally {
+      setPackingLoading(false);
+    }
+  };
 
   if (!trip) {
     return <div className="page-container">Trip Not Found...</div>;
@@ -70,7 +119,6 @@ function TripDetails() {
       <div className="form-container">
         <div className="form-box">
           <h2 className="form-title">{trip.title}</h2>
-
           <p><strong>Start Date:</strong>{" "}{new Date(trip.start_date).toLocaleDateString()}</p>
           <p><strong>End Date:</strong>{" "}{new Date(trip.end_date).toLocaleDateString()}</p>
           <p><strong>Notes:</strong> {trip.notes || "None"}</p>
@@ -118,6 +166,47 @@ function TripDetails() {
           >
             + Add Destination
           </button>
+
+          {/* Packing List */}
+          <button onClick={handleGeneratePackingList} disabled={packingLoading}>
+            {packingLoading ? "Generating..." : packingList ? "Regenerate Packing List" : "Generate Packing List"}
+          </button>
+
+          {packingError && <p>{packingError}</p>}
+
+          {packingList && (
+            <div>
+              <h4>Recommended</h4>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Color</th>
+                    <th>Material</th>
+                    <th>Warmth Level</th>
+                    <th>Waterproof</th>
+                    <th>Layerable</th>
+                    <th>Qty</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {packingList.recommended.map(item => (
+                    <tr key={item.item_id ?? item.pack_item_id}>
+                      <td>{item.item_subcategory ?? item.subcategory}</td>
+                      <td>{item.item_category ?? item.category}</td>
+                      <td>{item.color ?? "N/A"}</td>
+                      <td>{item.material ?? "N/A"}</td>
+                      <td>{item.warmth_level ?? "N/A"}</td>
+                      <td>{item.is_waterproof ? "Yes" : "No"}</td>
+                      <td>{item.is_layerable ? "Yes" : "No"}</td>
+                      <td>{item.suggestedQuantity ?? item.quantity_recommended}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </div>

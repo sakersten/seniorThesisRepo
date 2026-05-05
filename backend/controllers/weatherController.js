@@ -1,7 +1,12 @@
-// handles the request logic -> reads inputs, calls model functions, and sends responses
+// handles API logic for forecast AND historical weather
 
 import dotenv from 'dotenv'; 
 dotenv.config(); 
+
+import {
+  fetchForecastWeather,
+  fetchHistoricWeather
+} from "../services/weatherService.js";
 
 // gets the future forecast weather (5-7 days)
 const getForecastWeather = async (req, res) => {

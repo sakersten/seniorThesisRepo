@@ -1,14 +1,12 @@
-// handles activity database functionality
+// controller layer for activities; handles API requests and returns activity data from the database
 
-import DBAbstraction from "../db.js"; 
-const db = new DBAbstraction(); 
-
+import activityService from "../services/activityService.js";
 import dotenv from 'dotenv'; 
 dotenv.config(); 
 
 const getActivities = async (req, res) => {
   try {
-    const activities = await db.getActivities();
+    const activities = await activityService.getActivities();
     res.json(activities);
   } catch (err) {
     res.status(500).json({ error: err.message });

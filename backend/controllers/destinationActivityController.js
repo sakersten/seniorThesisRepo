@@ -1,8 +1,6 @@
-// handles destination activity database functionality
+// controller layer for destination activities; handles API requests for adding and retrieving activity associations
 
-import DBAbstraction from "../db.js"; 
-const db = new DBAbstraction(); 
-
+import activityService from "../services/activityService.js";
 import dotenv from 'dotenv'; 
 dotenv.config(); 
 
@@ -15,7 +13,7 @@ const addActivitiesToDestination = async (req, res) => {
       return res.status(400).json({ error: "Missing destination_id or activity_ids" });
     }
 
-    await db.addActivitiesToDestination(destination_id, activity_ids);
+    await activityService.addActivitiesToDestination(destination_id, activity_ids);
 
     res.status(201).json({ message: "Activities added to destination" });
 
@@ -30,7 +28,7 @@ const getActivitiesForDestination = async (req, res) => {
   try {
     const { destinationId } = req.params;
 
-    const activities = await db.getActivitiesForDestination(destinationId);
+    const activities = await activityService.getActivitiesForDestination(destinationId);
 
     res.json(activities);
 

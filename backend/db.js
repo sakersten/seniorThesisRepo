@@ -1,4 +1,7 @@
-// this file just sets up PostgreSQL
+// central database abstraction layer for the application
+// initializes PostgreSQL connection pool and contains all DB queries for users, trips, destinations, activities, and closet_items
+// this file ONLY interacts with the database - keeps SQL logic separate from controllers and services
+
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -557,6 +560,9 @@ class DBAbstraction {
       const tripStart = trip.start_date;
       const tripEnd = trip.end_date;
 
+      console.log(tripStart); 
+      console.log(tripEnd); 
+
       // 2. validate input exists
       if (!start_date || !end_date) {
         await client.query("ROLLBACK");
@@ -737,6 +743,139 @@ class DBAbstraction {
     }
   }
 
+  // ============================================
+  // PACKING LIST METHODS
+  // ============================================
+  // create a new packing list for a trip (replaces existing if one exists)
+  async createPackingList(trip_id, google_id, recommended, conditions) {
+    let client;
+
+    try {
+      client = await this.pool.connect();
+
+      await client.query("BEGIN");
+
+      // delete existing list for this trip if one exists (regenerate)
+      await client.query(
+        `DELETE FROM public."packing_lists"
+        WHERE trip_id = $1 AND google_id = $2`,
+        [trip_id, google_id]
+      );
+
+      // insert the new list
+      const listRes = await client.query(
+        `INSERT INTO public."packing_lists" (trip_id, google_id, conditions)
+        VALUES ($1, $2, $3)
+        RETURNING list_id`,
+        [trip_id, google_id, JSON.stringify(conditions)]
+      );
+
+      const list_id = listRes.rows[0].list_id;
+
+      // insert each recommended item
+      for (const item of recommended) {
+        await client.query(
+          `INSERT INTO public."packing_list_items"
+            (list_id, trip_id, source_item_id, item_name, category, subcategory, quantity_recommended, score, is_user_added)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, false)`,
+          [
+            list_id,
+            trip_id,
+            item.item_id,
+            item.item_subcategory,
+            item.item_category,
+            item.item_subcategory,
+            item.suggestedQuantity,
+            item.score
+          ]
+        );
+      }
+
+      await client.query("COMMIT");
+      return list_id;
+
+    } catch (err) {
+      if (client) await client.query("ROLLBACK");
+      throw err;
+    } finally {
+      if (client) client.release();
+    }
+  }
+
+  // get a saved packing list with full closet item details for a trip
+  async getPackingListByTrip(trip_id, google_id) {
+    let client;
+
+    try {
+      client = await this.pool.connect();
+
+      const listRes = await client.query(
+        `SELECT *
+        FROM public."packing_lists"
+        WHERE trip_id = $1 AND google_id = $2`,
+        [trip_id, google_id]
+      );
+
+      if (!listRes.rows[0]) return null;
+
+      const list = listRes.rows[0];
+
+    const itemsRes = await client.query(
+      `SELECT
+         public."packing_list_items".*,
+         public."closet_items".color,
+         public."closet_items".material,
+         public."closet_items".warmth_level,
+         public."closet_items".is_waterproof,
+         public."closet_items".is_layerable
+       FROM public."packing_list_items"
+       LEFT JOIN public."closet_items"
+         ON public."packing_list_items".source_item_id = public."closet_items".item_id
+       WHERE public."packing_list_items".list_id = $1
+       ORDER BY public."packing_list_items".score DESC`,
+      [list.list_id]
+    );
+
+      return {
+        ...list,
+        items: itemsRes.rows,
+      };
+
+    } catch (err) {
+      throw err;
+    } finally {
+      if (client) client.release();
+    }
+  }
+
+  // toggle is_packed on a single packing list item
+  // will add this feature if I have time lol
+  // async togglePackedStatus(packing_item_id, google_id) {
+  //   let client;
+
+  //   try {
+  //     client = await this.pool.connect();
+
+  //     const sql = `
+  //       UPDATE public."packing_list_items"
+  //       SET is_packed = NOT is_packed
+  //       FROM public."packing_lists"
+  //       WHERE public."packing_list_items".packing_item_id = $1
+  //         AND public."packing_list_items".list_id = public."packing_lists".list_id
+  //         AND public."packing_lists".google_id = $2
+  //       RETURNING public."packing_list_items".*
+  //     `;
+
+  //     const result = await client.query(sql, [packing_item_id, google_id]);
+
+  //     return result.rows[0] ?? null;
+
+  //   } catch (err) {
+  //     throw err;
+  //   } finally {
+  //     if (client) client.release();
+  //   }
+  // }
 }
 
 export default DBAbstraction;

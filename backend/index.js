@@ -35,7 +35,7 @@ import weatherRoutes from './routes/weatherRoutes.js';
 import activityRoutes from './routes/activityRoutes.js';
 import closetRoutes from './routes/closetRoutes.js';
 import destinationRoutes from './routes/destinationRoutes.js';
-//import packingListRoutes from './routes/packingListRoutes.js';
+import packingRoutes from './routes/packingRoutes.js';
 import tripRoutes from './routes/tripRoutes.js';
 import destinationActivityRoutes from './routes/destinationActivityRoutes.js';
 
@@ -60,7 +60,7 @@ app.use('/activities', activityRoutes);      // user trip activities
 app.use('/closet', closetRoutes);            // clothing items in user's closet
 app.use('/destinations', destinationRoutes); // cities, coords, climate info
 app.use('/destination-activities', destinationActivityRoutes); 
-//app.use('/packing', packingListRoutes);      // packing list generation & saving
+app.use('/packing', packingRoutes);          // packing list generation & saving
 app.use('/trips', tripRoutes);               // user's trips (start date, end date, etc.)
 
 
