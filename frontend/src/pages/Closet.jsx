@@ -50,6 +50,7 @@ function Closet() {
               <th>Layerable</th>
               <th>Color</th>
               <th>Material</th>
+              <th>Formality</th>
             </tr>
           </thead>
 
@@ -63,6 +64,7 @@ function Closet() {
                 <td>{item.layerable ? "Yes" : "No"}</td>
                 <td>{item.color}</td>
                 <td>{item.material}</td>
+                <td>{item.formality}</td>
               </tr>
             ))}
           </tbody>

@@ -190,10 +190,10 @@ export const getWeatherTags = ({ avgTemp, precipitationChance }) => {
   if (avgTemp == null) return ["unknown"];
 
   // temperature tags (Celsius for backend logic, but will display as Fahrenheit in the frontend)
-  if (avgTemp <= 32) tags.push("very_cold"); // very_cold = below 0°C / 32°F
-  else if (avgTemp <= 54) tags.push("cold"); // cold = 1-12°C / ~33-54°F
-  else if (avgTemp <= 69) tags.push("mild"); // mild = 13-20°C / ~55-69°F
-  else if (avgTemp <= 80) tags.push("warm"); // warm = 21-27° / ~70-80°F
+  if (avgTemp <= 0) tags.push("very_cold"); // very_cold = below 0°C / 32°F
+  else if (avgTemp <= 12) tags.push("cold"); // cold = 1-12°C / ~33-54°F
+  else if (avgTemp <= 13) tags.push("mild"); // mild = 13-20°C / ~55-69°F
+  else if (avgTemp <= 21) tags.push("warm"); // warm = 21-27° / ~70-80°F
   else tags.push("hot");                   // hot = above 28°C / ~81°F
 
   // precipitation tag

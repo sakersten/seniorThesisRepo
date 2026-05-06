@@ -10,9 +10,6 @@ const generatePackingList = async (req, res) => {
     const { tripId } = req.params;
     const userId = req.session.userId;
 
-    console.log("tripId:", tripId);
-    console.log("userId:", userId);
-
     const list = await createPackingListForTrip(tripId, userId);
 
     res.json(list);

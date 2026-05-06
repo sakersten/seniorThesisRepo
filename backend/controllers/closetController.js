@@ -22,7 +22,8 @@ const createClosetItem = async (req, res) => {
       is_waterproof,
       is_layerable,
       color,
-      material
+      material,
+      formality
     } = req.body;
 
     if (!item_category || !item_sub_category) {
@@ -37,7 +38,8 @@ const createClosetItem = async (req, res) => {
       is_waterproof ?? false,
       is_layerable ?? false,
       color ?? null,
-      material ?? null
+      material ?? null,
+      formality ?? null
     );
 
     res.status(201).json(newItem);

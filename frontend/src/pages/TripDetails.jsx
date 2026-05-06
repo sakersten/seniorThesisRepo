@@ -13,7 +13,6 @@ function TripDetails() {
   const [packingLoading, setPackingLoading] = useState(false);
   const [packingError, setPackingError] = useState(null);
 
-
   // fetch trip + destinations + existing packing list
   useEffect(() => {
     // get trip details
@@ -182,12 +181,12 @@ function TripDetails() {
                   <tr>
                     <th>Item</th>
                     <th>Category</th>
+                    <th>Formality</th>
                     <th>Color</th>
                     <th>Material</th>
                     <th>Warmth Level</th>
                     <th>Waterproof</th>
                     <th>Layerable</th>
-                    <th>Qty</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -195,12 +194,12 @@ function TripDetails() {
                     <tr key={item.item_id ?? item.pack_item_id}>
                       <td>{item.item_subcategory ?? item.subcategory}</td>
                       <td>{item.item_category ?? item.category}</td>
+                      <td>{item.formality ?? "N/A"}</td>
                       <td>{item.color ?? "N/A"}</td>
                       <td>{item.material ?? "N/A"}</td>
                       <td>{item.warmth_level ?? "N/A"}</td>
                       <td>{item.is_waterproof ? "Yes" : "No"}</td>
                       <td>{item.is_layerable ? "Yes" : "No"}</td>
-                      <td>{item.suggestedQuantity ?? item.quantity_recommended}</td>
                     </tr>
                   ))}
                 </tbody>

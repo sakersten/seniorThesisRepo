@@ -9,10 +9,10 @@ function NewClosetItem() {
   const categories = {
     Tops: ["T-Shirt", "Tank Top", "Long Sleeve", "Sweater"],
     Bottoms: ["Jeans", "Shorts", "Leggings", "Skirt"],
-    Dresses: ["Casual Dress", "Evening Dress"], 
-    Outerwear: ["Windbreaker", "Coat", "Rain Jacket"],
+    Dresses: ["Short Dress", "Midi Dress", "Long Dress"], 
+    Outerwear: ["Windbreaker", "Coat", "Rain Jacket", "Cardigan", "Hoodie"],
     Footwear: ["Sneakers", "Boots", "Sandals"],
-    Accessories: ["Hat", "Scarf", "Gloves"]
+    Accessories: ["Baseball Hat", "Beanie", "Scarf", "Gloves"]
   };
 
   // hard-coded materials for dropdown
@@ -20,6 +20,9 @@ function NewClosetItem() {
 
   // hard-coded colors for dropdown -> tbd if I want to do this or not since some people are specific with color descrptions
   const colors = [""]; 
+
+  // hard-coded attire for dropdown
+  const formalities = ["Athletic", "Casual", "Business Casual", "Formal"];
 
   // form state
   const [formData, setFormData] = useState({
@@ -29,7 +32,8 @@ function NewClosetItem() {
     is_waterproof: false,
     is_layerable: false,
     color: "",
-    material: ""
+    material: "",
+    formality: ""
   });
 
   // handle input changes
@@ -203,6 +207,19 @@ function NewClosetItem() {
             <option value="">Select Material</option>
             {materials.map((mat) => (
               <option key={mat} value={mat}>{mat}</option>
+            ))}
+          </select>
+          
+          {/* Formality */}
+          <select
+            name="formality"
+            value={formData.formality}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Formality</option>
+            {formalities.map((formal) => (
+              <option key={formal} value={formal}>{formal}</option>
             ))}
           </select>
 

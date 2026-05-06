@@ -77,15 +77,15 @@ class DBAbstraction {
   // ============================================
 
   // create a new closet item
-  async createClosetItem(google_id, item_category, item_sub_category, warmth_level, is_waterproof, is_layerable, color, material) {
+  async createClosetItem(google_id, item_category, item_sub_category, warmth_level, is_waterproof, is_layerable, color, material, formality) {
     let client;
 
     try {
       client = await this.pool.connect();
       const sql = `
         INSERT INTO public."closet_items"
-          (google_id, item_category, item_subcategory, warmth_level, is_waterproof, is_layerable, color, material)
-        VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+          (google_id, item_category, item_subcategory, warmth_level, is_waterproof, is_layerable, color, material, formality)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
         RETURNING *;
       `;
 
@@ -97,7 +97,8 @@ class DBAbstraction {
         is_waterproof,
         is_layerable,
         color,
-        material
+        material,
+        formality
       ]);
 
       return result.rows[0];
@@ -724,7 +725,7 @@ class DBAbstraction {
       client = await this.pool.connect();
 
       const sql = `
-        SELECT activities.activity_id, activities.name
+        SELECT activities.activity_id, activities.name, activities.packing_tags
         FROM public."destination_activities"
         JOIN public."activities"
           ON destination_activities.activity_id = activities.activity_id
@@ -776,8 +777,8 @@ class DBAbstraction {
       for (const item of recommended) {
         await client.query(
           `INSERT INTO public."packing_list_items"
-            (list_id, trip_id, source_item_id, item_name, category, subcategory, quantity_recommended, score, is_user_added)
-          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, false)`,
+            (list_id, trip_id, source_item_id, item_name, category, subcategory, score, is_user_added)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, false)`,
           [
             list_id,
             trip_id,
@@ -785,7 +786,6 @@ class DBAbstraction {
             item.item_subcategory,
             item.item_category,
             item.item_subcategory,
-            item.suggestedQuantity,
             item.score
           ]
         );
@@ -827,7 +827,8 @@ class DBAbstraction {
          public."closet_items".material,
          public."closet_items".warmth_level,
          public."closet_items".is_waterproof,
-         public."closet_items".is_layerable
+         public."closet_items".is_layerable, 
+        public."closet_items".formality
        FROM public."packing_list_items"
        LEFT JOIN public."closet_items"
          ON public."packing_list_items".source_item_id = public."closet_items".item_id
