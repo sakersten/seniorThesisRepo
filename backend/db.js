@@ -664,6 +664,44 @@ class DBAbstraction {
     }
   }
 
+  async updateTripDestination(destination_id, google_id, destination_name, start_date, end_date, notes) {
+    let client;
+
+    try {
+      client = await this.pool.connect();
+
+      const sql = `
+        UPDATE public."destinations"
+        SET
+          destination_name = COALESCE($3, public."destinations".destination_name),
+          start_date = COALESCE($4, public."destinations".start_date),
+          end_date = COALESCE($5, public."destinations".end_date),
+          notes = COALESCE($6, public."destinations".notes)
+        FROM public."trips"
+        WHERE public."destinations".destination_id = $1
+          AND public."destinations".trip_id = public."trips".trip_id
+          AND public."trips".google_id = $2
+        RETURNING public."destinations".*;
+      `;
+
+      const result = await client.query(sql, [
+        destination_id,
+        google_id,
+        destination_name ?? null,
+        start_date ?? null,
+        end_date ?? null,
+        notes ?? null
+      ]);
+
+      return result.rows[0] || null;
+
+    } catch (err) {
+      throw err;
+    } finally {
+      if (client) client.release();
+    }
+  } 
+
   // delete destination
   async removeTripDestination(destination_id, google_id) {
     let client; 
@@ -671,17 +709,17 @@ class DBAbstraction {
       client = await this.pool.connect(); 
 
       const sql = `
-      DELETE FROM public."destinations"
-      USING public."trips"
-      WHERE destination_id = $1
-        AND destination.trip_id = trip.trip_id
-        AND trip.google_id = $2
-      RETURNING *
-    `;
+        DELETE FROM public."destinations"
+        USING public."trips"
+        WHERE public."destinations".destination_id = $1
+          AND public."destinations".trip_id = public."trips".trip_id
+          AND public."trips".google_id = $2
+        RETURNING public."destinations".*;
+      `;
 
-    const result = await client.query(sql, [destination_id, google_id]);
+      const result = await client.query(sql, [destination_id, google_id]);
 
-    return result.rows[0]; // undefined if nothing deleted / not authorized
+      return result.rows[0]; // undefined if nothing deleted / not authorized
 
     } catch (err) {
       throw err;

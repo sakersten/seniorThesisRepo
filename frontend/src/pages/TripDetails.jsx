@@ -13,6 +13,25 @@ function TripDetails() {
   const [packingLoading, setPackingLoading] = useState(false);
   const [packingError, setPackingError] = useState(null);
 
+  const [tripEditMode, setTripEditMode] = useState(false);
+  const [tripEditForm, setTripEditForm] = useState({
+    title: "",
+    start_date: "",
+    end_date: "",
+    notes: ""
+  });
+
+  const [confirmDeleteTrip, setConfirmDeleteTrip] = useState(false);
+
+  const [editDestinationId, setEditDestinationId] = useState(null);
+  const [editDestinationForm, setEditDestinationForm] = useState({
+    destination_name: "",
+    start_date: "",
+    end_date: "",
+    notes: ""
+  });
+  const [confirmDeleteDestinationId, setConfirmDeleteDestinationId] = useState(null);
+
   // fetch trip + destinations + existing packing list
   useEffect(() => {
     // get trip details
@@ -96,6 +115,97 @@ function TripDetails() {
     }
   };
 
+  const handleEditTrip = async () => {
+    try {
+      const res = await fetch(`http://localhost:53140/trips/update-trip/${tripId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(tripEditForm)
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to update trip");
+      }
+
+      const updatedTrip = await res.json();
+      setTrip(updatedTrip);
+      setTripEditMode(false);
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteTrip = async () => {
+    try {
+      const res = await fetch(`http://localhost:53140/trips/${tripId}`, {
+        method: "DELETE",
+        credentials: "include"
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to delete trip");
+      }
+
+      navigate("/upcoming-trips");
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+    const handleEditDestination = async (destinationId) => {
+    try {
+      const res = await fetch(`http://localhost:53140/destinations/update/${destinationId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(editDestinationForm)
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to update destination");
+      }
+
+      const updatedDestination = await res.json();
+
+      // update destinations list in state
+      setDestinations(latestState =>
+        latestState.map(dest => dest.destination_id === destinationId ? { ...dest, ...updatedDestination } : dest)
+      );
+
+      setEditDestinationId(null);
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteDestination = async (destinationId) => {
+    try {
+      const res = await fetch(`http://localhost:53140/destinations/delete/${destinationId}`, {
+        method: "DELETE",
+        credentials: "include"
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to delete destination");
+      }
+
+      // remove destination from state
+      setDestinations(latestState => latestState.filter(dest => dest.destination_id !== destinationId));
+      setConfirmDeleteDestinationId(null);
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   if (!trip) {
     return <div className="page-container">Trip Not Found...</div>;
   }
@@ -117,11 +227,81 @@ function TripDetails() {
       {/* Trip Info */}
       <div className="form-container">
         <div className="form-box">
-          <h2 className="form-title">{trip.title}</h2>
-          <p><strong>Start Date:</strong>{" "}{new Date(trip.start_date).toLocaleDateString()}</p>
-          <p><strong>End Date:</strong>{" "}{new Date(trip.end_date).toLocaleDateString()}</p>
-          <p><strong>Notes:</strong> {trip.notes || "None"}</p>
-        </div>
+          {!tripEditMode ? (
+            <>
+              <h2 className="form-title">{trip.title}</h2>
+              <p><strong>Start Date:</strong>{" "}{new Date(trip.start_date).toLocaleDateString()}</p>
+              <p><strong>End Date:</strong>{" "}{new Date(trip.end_date).toLocaleDateString()}</p>
+              <p><strong>Notes:</strong> {trip.notes || "None"}</p>
+
+              <button onClick={() => {
+                setTripEditMode(true);
+                setTripEditForm({
+                  title: trip.title,
+                  start_date: trip.start_date.split("T")[0],
+                  end_date: trip.end_date.split("T")[0],
+                  notes: trip.notes ?? ""
+                });
+              }}>
+                Edit Trip
+              </button>
+
+              {/* Delete Trip */}
+              {!confirmDeleteTrip ? (
+                <button onClick={() => setConfirmDeleteTrip(true)}>
+                  Delete Trip
+                </button>
+              ) : (
+                <div>
+                  <p>Are you sure you want to delete this trip? This cannot be undone.</p>
+                  <button onClick={handleDeleteTrip}>Yes, delete trip</button>
+                  <button onClick={() => setConfirmDeleteTrip(false)}>Cancel</button>
+                </div>
+              )}
+            </>
+          ):(
+            <>
+              <h2 className="form-title">Edit Trip</h2>
+
+              <div className="form-group">
+                <label>Title</label>
+                <input
+                  value={tripEditForm.title}
+                  onChange={event => setTripEditForm({ ...tripEditForm, title: event.target.value })}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Start Date</label>
+                <input
+                  type="date"
+                  value={tripEditForm.start_date}
+                  onChange={event => setTripEditForm({ ...tripEditForm, start_date: event.target.value })}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>End Date</label>
+                <input
+                  type="date"
+                  value={tripEditForm.end_date}
+                  onChange={event => setTripEditForm({ ...tripEditForm, end_date: event.target.value })}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Notes</label>
+                <input
+                  value={tripEditForm.notes}
+                  onChange={event => setTripEditForm({ ...tripEditForm, notes: event.target.value })}
+                />
+              </div>
+
+              <button onClick={handleEditTrip}>Save Changes</button>
+              <button onClick={() => setTripEditMode(false)}>Cancel</button>
+          </>
+        )}
+      </div>
 
         {/* Destinations */}
         <div className="form-box">
@@ -132,6 +312,54 @@ function TripDetails() {
           ) : (
             destinations.map((dest, index) => (
               <div key={dest.destination_id} className="form-group">
+                {editDestinationId === dest.destination_id ? (
+                  <>
+                    <h4>Edit Destination</h4>
+
+
+                    <div className="form-group">
+                      <label>Name</label>
+                      <input
+                        value={editDestinationForm.destination_name}
+                        onChange={event => setEditDestinationForm({ ...editDestinationForm, destination_name: event.target.value })}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Start Date</label>
+                      <input
+                        type="date"
+                        value={editDestinationForm.start_date}
+                        onChange={event => setEditDestinationForm({ ...editDestinationForm, start_date: event.target.value })}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>End Date</label>
+                      <input
+                        type="date"
+                        value={editDestinationForm.end_date}
+                        onChange={event => setEditDestinationForm({ ...editDestinationForm, end_date: event.target.value })}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Notes</label>
+                      <input
+                        value={editDestinationForm.notes}
+                        onChange={event => setEditDestinationForm({ ...editDestinationForm, notes: event.target.value })}
+                      />
+                    </div>
+
+                    <button onClick={() => handleEditDestination(dest.destination_id)}>
+                      Save Changes
+                    </button>
+                    <button onClick={() => setEditDestinationId(null)}>
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <>
                 <p><strong>{index + 1}. {dest.destination_name}</strong></p>
                 <p>
                     {new Date(dest.start_date).toLocaleDateString()}{" → "}
@@ -151,6 +379,36 @@ function TripDetails() {
                   </p>
                 ) : (
                   <p>No activities</p>
+                    )}
+
+                    <button onClick={() => {
+                      setEditDestinationId(dest.destination_id);
+                      setEditDestinationForm({
+                        destination_name: dest.destination_name,
+                        start_date: dest.start_date.split("T")[0],
+                        end_date: dest.end_date.split("T")[0],
+                        notes: dest.notes ?? ""
+                      });
+                    }}>
+                      Edit Destination
+                    </button>
+
+                    {confirmDeleteDestinationId === dest.destination_id ? (
+                      <div>
+                        <p>Are you sure you want to delete this destination? This cannot be undone.</p>
+                        <button onClick={() => handleDeleteDestination(dest.destination_id)}>
+                          Yes, delete destination
+                        </button>
+                        <button onClick={() => setConfirmDeleteDestinationId(null)}>
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button onClick={() => setConfirmDeleteDestinationId(dest.destination_id)}>
+                        Delete Destination
+                      </button>
+                    )}
+                  </>
                 )}
               </div>
             ))

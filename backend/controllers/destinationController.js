@@ -148,6 +148,28 @@ const createDestination = async (req, res) => {
 // update specific destination
 const updateDestination = async (req, res) => {
   try {
+    const google_id = req.session.userId;
+    if (!google_id) {
+      return res.status(401).json({ error: "User not logged in" });
+    }
+
+    const destination_id = req.params.id;
+    const { destination_name, start_date, end_date, notes } = req.body;
+
+    const updatedDestination = await db.updateTripDestination(
+      destination_id,
+      google_id,
+      destination_name,
+      start_date,
+      end_date,
+      notes
+    );
+
+    if (!updatedDestination) {
+      return res.status(404).json({ error: "Destination not found or not authorized" });
+    }
+
+    res.json(updatedDestination);
 
   } catch (err) {
     console.error(err);

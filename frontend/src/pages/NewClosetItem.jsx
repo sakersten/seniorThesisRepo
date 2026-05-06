@@ -144,10 +144,10 @@ function NewClosetItem() {
                   warmth_level: newValue
                 }))
               }
-              step={10}
+              step={1}
               marks
               min={0}
-              max={100}
+              max={10}
               valueLabelDisplay="auto"
               sx={{
                 "& .MuiSlider-track": {

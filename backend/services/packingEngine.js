@@ -114,8 +114,10 @@ export const scoreItem = (item, conditions) => {
   }
 
   if (conditions.weather.includes("warm") || conditions.weather.includes("hot")) {
-    if (item.warmth_level <= 3) score += 2;
-    else if (item.warmth_level <= 5) score += 1;
+    if (item.item_category?.toLowerCase() !== "outerwear") {
+      if (item.warmth_level <= 3) score += 2;
+      else if (item.warmth_level <= 5) score += 1;
+    }
   }
 
   // waterproofing bonus based on precipitation tags
