@@ -41,6 +41,8 @@ function NewDestinations() {
     { country_id: "", state_id: "", city_id: "", start_date: "", end_date: "", notes: "", activity_ids: [] }
   ]);
 
+  const [trip, setTrip] = useState(null);
+
   // fetch countries on load
   useEffect(() => {
     fetch("http://localhost:53140/destinations/countries")
@@ -56,6 +58,20 @@ function NewDestinations() {
       .then(data => setActivities(data))
       .catch(err => console.error("Error fetching activities:", err));
   }, []);
+
+  // fetch trip on load
+  useEffect(() => {
+    fetch(`http://localhost:53140/trips/${tripId}`, {
+      credentials: "include"
+    })
+      .then(res => res.json())
+      .then(data => setTrip(data))
+      .catch(err => console.error(err));
+  }, [tripId]);
+
+  // get trip start and end dates for calendar bounds
+  const tripStartDate = trip?.start_date?.split("T")[0] ?? "";
+  const tripEndDate = trip?.end_date?.split("T")[0] ?? "";
 
   // update destination field
   const handleDestinationChange = (index, field, value) => {
@@ -257,11 +273,11 @@ function NewDestinations() {
             {/* Start/End Dates */}
             <div className="form-group">
               <label>Start Date</label>
-              <input type="date" value={dest.start_date} onChange={event => handleDestinationChange(index, "start_date", event.target.value)} />
+              <input type="date" value={dest.start_date} min={tripStartDate} max={tripEndDate} onChange={event => handleDestinationChange(index, "start_date", event.target.value)} />
             </div>
             <div className="form-group">
               <label>End Date</label>
-              <input type="date" value={dest.end_date} onChange={event => handleDestinationChange(index, "end_date", event.target.value)} />
+              <input type="date" value={dest.end_date} min={dest.start_date || tripStartDate} max={tripEndDate}onChange={event => handleDestinationChange(index, "end_date", event.target.value)} />
             </div>
 
             {/* Notes */}

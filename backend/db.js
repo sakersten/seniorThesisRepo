@@ -561,9 +561,6 @@ class DBAbstraction {
       const tripStart = trip.start_date;
       const tripEnd = trip.end_date;
 
-      console.log(tripStart); 
-      console.log(tripEnd); 
-
       // 2. validate input exists
       if (!start_date || !end_date) {
         await client.query("ROLLBACK");

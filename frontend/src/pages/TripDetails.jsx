@@ -330,6 +330,8 @@ function TripDetails() {
                       <input
                         type="date"
                         value={editDestinationForm.start_date}
+                        min={trip.start_date.split("T")[0]}
+                        max={trip.end_date.split("T")[0]}
                         onChange={event => setEditDestinationForm({ ...editDestinationForm, start_date: event.target.value })}
                       />
                     </div>
@@ -338,7 +340,9 @@ function TripDetails() {
                       <label>End Date</label>
                       <input
                         type="date"
-                        value={editDestinationForm.end_date}
+                        value={editDestinationForm.end_date}    
+                        min={editDestinationForm.start_date || trip.start_date.split("T")[0]}
+                        max={trip.end_date.split("T")[0]}
                         onChange={event => setEditDestinationForm({ ...editDestinationForm, end_date: event.target.value })}
                       />
                     </div>
