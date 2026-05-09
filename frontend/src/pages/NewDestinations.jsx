@@ -195,7 +195,7 @@ function NewDestinations() {
         <h2 className="form-title">Add Destinations</h2>
 
         {destinations.map((dest, index) => (
-          <div key={index} className="form-box" style={{ gap: "0.5rem" }}>
+          <div key={index} className="form-box">
             <h3>Destination #{index + 1}</h3>
 
             {/* Country */}
@@ -305,17 +305,17 @@ function NewDestinations() {
               />
             </div>
 
-          <button type="button" className="form-button" onClick={() => removeDestination(index)}>
-            Cancel
+          <button type="button" className="btn-secondary" onClick={() => removeDestination(index)}>
+            Remove Destination
           </button>
         </div>
       ))}
 
-      <div className="button-row">
-        <button type="button" className="form-button" onClick={addDestination}>
+      <div className="btn-row" >
+        <button type="button" className="btn-secondary" onClick={addDestination}>
           + Add Destination
         </button>
-        <button type="button" className="save-button" onClick={handleSubmit}>
+        <button type="button" className="btn-success" onClick={handleSubmit}>
           Save Destinations
         </button>
       </div>

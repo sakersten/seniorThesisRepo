@@ -22,21 +22,21 @@ function Closet() {
         ← Back to Home
       </button>
 
-      <h1>Closet Items</h1>
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", marginBottom: "1rem" }}>
+        <h1>Closet Items</h1>
 
-      {/* Link to add new item */}
-      <button
-        className="form-button"
-        onClick={() => navigate("/new-closet-item")}>
-        + New Closet Item
-      </button>
+        {/* Link to add new item */}
+        <button
+          className="btn-primary"
+          style={{ width: "fit-content", alignSelf: "center" }}
+          onClick={() => navigate("/new-closet-item")}>
+          + New Closet Item
+        </button>
+      </div>
 
-      {/* add filtering functionality -> item category/subcategory, weather type (by warmth level probably), etc.
-      they would act as buttons and then would filter the items when clicked (and then filter would be removed when clicked again) 
-      add later -> sprint #3 work! */}
+      {/* TO-DO: add filtering functionality -> item category/subcategory, weather type (by warmth level probably), etc.
+      they would act as buttons and then would filter the items when clicked (and then filter would be removed when clicked again) */}
 
-
-      {/* TO-DO: make more aesthetic */}  
       {closet.length === 0 ? (
         <p>No closet items yet.</p>
       ) : (
@@ -70,7 +70,6 @@ function Closet() {
           </tbody>
         </table>
       )}
-
     </div>
   );
 }

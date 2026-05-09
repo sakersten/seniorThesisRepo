@@ -116,7 +116,9 @@ export const scoreItem = (item, conditions) => {
   if (conditions.weather.includes("warm") || conditions.weather.includes("hot")) {
     if (item.item_category?.toLowerCase() !== "outerwear") {
       if (item.warmth_level <= 3) score += 2;
-      else if (item.warmth_level <= 5) score += 1;
+      else if (item.warmth_level <= 5) score += 1;    
+      else if (item.warmth_level >= 8) score -= 3;  // penalty for very warm items
+      else if (item.warmth_level >= 6) score -= 1;  // slight penalty for moderately warm items
     }
   }
 

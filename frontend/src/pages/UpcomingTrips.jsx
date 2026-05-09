@@ -23,11 +23,8 @@ function UpcomingTrips() {
       </button>
 
       <h1>Upcoming Trips</h1>
-
-      {/* TO-DO: make more aesthetic */}
-      {/* TO-DO: add a way to see past trips! */}
+      {/* TO-DO: add a way to see past trips -> already have backend functionality for it */}
       
-      {/* add column to view a packing list for specific trip */}
       {trips.length === 0 ? (
         <p>No upcoming trips yet.</p>
       ) : (

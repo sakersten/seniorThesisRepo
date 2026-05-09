@@ -18,9 +18,6 @@ function NewClosetItem() {
   // hard-coded materials for dropdown
   const materials = ["Cashmere", "Cotton", "Denim", "Flannel", "Fur", "Leather", "Linen", "Nylon", "Polyester", "Silk", "Spandex", "Wool"]; 
 
-  // hard-coded colors for dropdown -> tbd if I want to do this or not since some people are specific with color descrptions
-  const colors = [""]; 
-
   // hard-coded attire for dropdown
   const formalities = ["Athletic", "Casual", "Business Casual", "Formal"];
 
@@ -132,10 +129,8 @@ function NewClosetItem() {
           </select>
 
           {/* Warmth Level */}
-          <div style={{ width: 300, margin: "20px" }}>
-            <div style={{ marginBottom: "8px", fontWeight: "500" }}>
-              Warmth Level
-            </div>
+          <div className="form-group">
+            <label>Warmth Level</label>
             <Slider
               value={formData.warmth_level}     // use state
               onChange={(event, newValue) =>    // MUI Slider passes (event, newValue)
@@ -191,6 +186,7 @@ function NewClosetItem() {
           <div className="form-group">
             <label>Color</label>
             <input
+              type="text"
               name="color"
               value={formData.color}
               onChange={handleChange}

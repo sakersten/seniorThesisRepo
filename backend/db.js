@@ -886,32 +886,32 @@ class DBAbstraction {
 
   // toggle is_packed on a single packing list item
   // will add this feature if I have time lol
-  // async togglePackedStatus(packing_item_id, google_id) {
-  //   let client;
+  async togglePackedStatus(pack_item_id, google_id) {
+    let client;
 
-  //   try {
-  //     client = await this.pool.connect();
+    try {
+      client = await this.pool.connect();
 
-  //     const sql = `
-  //       UPDATE public."packing_list_items"
-  //       SET is_packed = NOT is_packed
-  //       FROM public."packing_lists"
-  //       WHERE public."packing_list_items".packing_item_id = $1
-  //         AND public."packing_list_items".list_id = public."packing_lists".list_id
-  //         AND public."packing_lists".google_id = $2
-  //       RETURNING public."packing_list_items".*
-  //     `;
+      const sql = `
+        UPDATE public."packing_list_items"
+        SET is_checked = NOT is_checked
+        FROM public."packing_lists"
+        WHERE public."packing_list_items".pack_item_id = $1
+          AND public."packing_list_items".list_id = public."packing_lists".list_id
+          AND public."packing_lists".google_id = $2
+        RETURNING public."packing_list_items".*
+      `;
 
-  //     const result = await client.query(sql, [packing_item_id, google_id]);
+      const result = await client.query(sql, [pack_item_id, google_id]);
 
-  //     return result.rows[0] ?? null;
+      return result.rows[0] ?? null;
 
-  //   } catch (err) {
-  //     throw err;
-  //   } finally {
-  //     if (client) client.release();
-  //   }
-  // }
+    } catch (err) {
+      throw err;
+    } finally {
+      if (client) client.release();
+    }
+  }
 }
 
 export default DBAbstraction;

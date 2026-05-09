@@ -34,22 +34,25 @@ const getPackingList = async (req, res) => {
   }
 };
 
-// const togglePacked = async (req, res) => {
-//   try {
-//     const { itemId } = req.params;
-//     const userId = req.session.userId;
+const togglePacked = async (req, res) => {
+  try {
+    const { itemId } = req.params;
+    const userId = req.session.userId;
 
-//     const updated = await db.togglePackedStatus(itemId, userId);
+    const updated = await db.togglePackedStatus(itemId, userId);
+    console.log("togglePacked result:", updated);
 
-//     if (!updated) return res.status(404).json({ error: "Item not found" });
+    if (!updated) return res.status(404).json({ error: "Item not found" });
 
-//     res.json(updated);
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
+    res.json(updated);
+  } catch (err) {
+    console.log("togglePacked ERROR:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+};
 
 export default { 
   generatePackingList,
-  getPackingList
+  getPackingList, 
+  togglePacked
  };

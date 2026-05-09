@@ -28,12 +28,21 @@ function Login({ onLogin }) {
   };
 
   return (
-    <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-      <h2>Login with Google</h2>
-      <GoogleLogin
-        onSuccess={handleGoogleLogin}
-        onError={() => console.log("Login failed")}
-      />
+    <div className="login-container">
+      {/* Web App Name */}
+      <div style={{ textAlign: "center"}}>
+        <h1>PackPal</h1>
+        <p>Your smart travel packing assistant!</p>
+      </div>
+
+      <div className="form-box" style={{ width: "100%", maxWidth: "360px", alignItems: "center", textAlign: "center" }}>
+        <h2>Welcome!</h2>
+        <p style={{ marginBottom: "1.5rem", fontSize: "0.875rem" }}>Sign in to manage your trips and packing lists.</p>
+        <GoogleLogin
+          onSuccess={handleGoogleLogin}
+          onError={() => console.log("Login failed")}
+        />
+      </div>
     </div>
   );
 }
